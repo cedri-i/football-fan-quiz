@@ -68,7 +68,7 @@ const IMAGE_QUERY={
  梅西:'Lionel Messi',C罗:'Cristiano Ronaldo',内马尔:'Neymar',莫德里奇:'Luka Modrić',阿扎尔:'Eden Hazard',格列兹曼:'Antoine Griezmann',亚马尔:'Lamine Yamal',姆巴佩:'Kylian Mbappé',哈兰德:'Erling Haaland',穆西亚拉:'Jamal Musiala'
 };
 const COUNTRIES=new Set(['巴西','阿根廷','法国','德国','英格兰','西班牙','葡萄牙','荷兰','日本','挪威','乌拉圭','克罗地亚','摩洛哥','瑞士','意大利','比利时','加拿大','塞内加尔','哥伦比亚']);
-const COUNTRY_QUERY={巴西:'Brazil national football team',阿根廷:'Argentina national football team',法国:'France national football team',德国:'Germany national football team',英格兰:'England national football team',西班牙:'Spain national football team',葡萄牙:'Portugal national football team',荷兰:'Netherlands national football team',日本:'Japan national football team',挪威:'Norway national football team',乌拉圭:'Uruguay national football team',克罗地亚:'Croatia national football team',摩洛哥:'Morocco national football team',瑞士:'Switzerland national football team',意大利:'Italy national football team',比利时:'Belgium national football team',加拿大:'Canada national soccer team',塞内加尔:'Senegal national football team',哥伦比亚:'Colombia national football team'};
+const COUNTRY_QUERY={巴西:'Brazil',阿根廷:'Argentina',法国:'France',德国:'Germany',英格兰:'England',西班牙:'Spain',葡萄牙:'Portugal',荷兰:'Netherlands',日本:'Japan',挪威:'Norway',乌拉圭:'Uruguay',克罗地亚:'Croatia',摩洛哥:'Morocco',瑞士:'Switzerland',意大利:'Italy',比利时:'Belgium',加拿大:'Canada',塞内加尔:'Senegal',哥伦比亚:'Colombia'};
 function reset(){state={index:0,asked:[],history:[],scores:{},unknown:0,orders:{}};}
 function pickQuestion(){
  const unused=Q.filter(q=>!state.asked.includes(q.id));
@@ -157,8 +157,12 @@ async function hydrateResultImages(results){
   }
   const query=COUNTRIES.has(name)?COUNTRY_QUERY[name]:(IMAGE_QUERY[name]||`${name} football club`);
   try{
-   const url=`https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrlimit=1&prop=pageimages&piprop=thumbnail&pithumbsize=${PLAYERS.has(name)?800:500}&format=json&origin=*`;
-   const data=await fetch(url).then(r=>r.json()); const page=Object.values(data.query?.pages||{})[0]; const src=page?.thumbnail?.source; if(!src)return;
+   const url=PLAYERS.has(name)
+    ?`https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrlimit=1&prop=pageimages&piprop=thumbnail&pithumbsize=800&format=json&origin=*`
+    :`https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(query)}`;
+   const data=await fetch(url).then(r=>r.json());
+   const src=PLAYERS.has(name)?Object.values(data.query?.pages||{})[0]?.thumbnail?.source:data.teams?.[0]?.strBadge;
+   if(!src)return;
    const img=new Image(); img.alt=PLAYERS.has(name)?`${name}高清头像`:`${name}队徽`; img.onload=()=>slot.replaceChildren(img); img.src=src;
   }catch{}
  }));
