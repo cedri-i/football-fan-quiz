@@ -38,11 +38,19 @@ const Q = [
  {id:'club',type:'俱乐部性格',text:'你更愿意把十年交给怎样的俱乐部？',a:[
   ['冠军很多，要求也永远不会降低',['皇马','拜仁','曼城','尤文图斯']],['可能跌倒，但故事和歌不会断',['利物浦','曼联','AC米兰','马赛']],['先把一种踢法坚持成身份',['巴萨','阿贾克斯','阿森纳','西班牙']],['不需要所有人喜欢，只要自己人够坚定',['马竞','毕尔巴鄂竞技','多特蒙德','乌拉圭']]]},
  {id:'last',type:'最后一题',text:'比赛结束后，你最常把哪件事带走？',a:[
-  ['那个决定胜负的名字',['梅西','C罗','姆巴佩','哈兰德']],['队徽还在积分榜上的位置',['皇马','巴萨','利物浦','曼联','阿森纳']],['一群人短暂成为同一个人的感觉',['阿根廷','法国','巴西','英格兰']],['某个没人讨论、但自己记得的细节',['莫德里奇','阿扎尔','格列兹曼','穆西亚拉']]]}
+  ['那个决定胜负的名字',['梅西','C罗','姆巴佩','哈兰德']],['队徽还在积分榜上的位置',['皇马','巴萨','利物浦','曼联','阿森纳']],['一群人短暂成为同一个人的感觉',['阿根廷','法国','巴西','英格兰']],['某个没人讨论、但自己记得的细节',['莫德里奇','阿扎尔','格列兹曼','穆西亚拉']]]},
+ {id:'duel_finish',duel:true,type:'巨星加时',text:'决赛最后一分钟，你更愿意把球交给哪种人？',a:[
+  ['不急着射，先把面前的人晃开',['梅西','巴萨','阿根廷']],['不用铺垫，接球就冲着球门去',['C罗','皇马','葡萄牙']],['队友真空了，他会把球传出去',['梅西','巴萨','阿根廷']],['哪怕刚踢丢一个，也还敢主动要球',['C罗','皇马','葡萄牙']]]},
+ {id:'duel_story',duel:true,type:'生涯叙事',text:'下面两种职业生涯，你更吃哪一套？',a:[
+  ['在一家俱乐部从小孩踢成队长，一人一城',['梅西','巴萨','阿根廷']],['换个联赛，照样从头赢一遍',['C罗','皇马','葡萄牙']],['球迷看着他长大，他也成了这座城的记忆',['梅西','巴萨','阿根廷']],['主场换了好几个，目标一直没变',['C罗','皇马','葡萄牙']]]},
+ {id:'duel_leader',duel:true,type:'领袖方式',text:'球队踢乱了，你希望头牌怎么做？',a:[
+  ['多拿球，先把节奏捋顺',['梅西','巴萨','阿根廷']],['直接喊话，下一球交给他',['C罗','皇马','葡萄牙']],['回到中场接球，让大家先传起来',['梅西','巴萨','阿根廷']],['把全队叫醒，再往前冲一次',['C罗','皇马','葡萄牙']]]},
+ {id:'duel_memory',duel:true,type:'巨星决胜',text:'你更常点开哪类集锦？',a:[
+  ['贴着脚的连续变向',['梅西','巴萨','阿根廷']],['压着后卫起跳的头球',['C罗','皇马','葡萄牙']],['几个人围着，球就是抢不走',['梅西','巴萨','阿根廷']],['绝杀后冲向角旗区',['C罗','皇马','葡萄牙']]]}
 ];
 
 let state;
-const RIVALS={巴萨:'皇马',皇马:'巴萨',曼联:'利物浦',利物浦:'曼联'};
+const RIVALS={巴萨:'皇马',皇马:'巴萨',曼联:'利物浦',利物浦:'曼联',梅西:'C罗',C罗:'梅西'};
 const GROUPS=[
  {name:'红蓝传控派',members:['巴萨','西班牙']},
  {name:'梅西宇宙',members:['巴萨','阿根廷','梅西']},
@@ -65,9 +73,18 @@ function reset(){state={index:0,asked:[],history:[],scores:{},unknown:0,orders:{
 function pickQuestion(){
  const unused=Q.filter(q=>!state.asked.includes(q.id));
  if(!unused.length)return null;
- if(state.index<6)return unused[0];
+ const duelUnused=unused.filter(q=>q.duel);
+ const duelCount=state.asked.filter(id=>Q.find(q=>q.id===id)?.duel).length;
+ const duelGap=Math.abs((state.scores['梅西']||0)-(state.scores['C罗']||0));
+ if(state.index===4&&duelCount<1)return duelUnused[0];
+ if(state.index===9&&duelCount<2)return duelUnused[0];
+ if(state.index===13&&duelCount<3&&duelGap<6)return duelUnused[0];
+ if(state.index===16&&duelCount<4&&duelGap<6)return duelUnused[0];
+ const standardUnused=unused.filter(q=>!q.duel);
+ if(!standardUnused.length)return duelUnused[0]||null;
+ if(state.index<6)return standardUnused[0];
  const leaders=Object.entries(state.scores).sort((a,b)=>b[1]-a[1]).slice(0,8).map(x=>x[0]);
- return unused.sort((x,y)=>relevance(y,leaders)-relevance(x,leaders))[0];
+ return standardUnused.sort((x,y)=>relevance(y,leaders)-relevance(x,leaders))[0];
 }
 function relevance(q,leaders){return q.a.flatMap(x=>x[1]).filter(x=>leaders.includes(x)).length+Math.random()*.4}
 function render(){
@@ -79,11 +96,16 @@ function render(){
  $('#back-btn').style.opacity=state.index?'1':'.35';
  $('#answers').innerHTML='';
  if(!state.orders[q.id])state.orders[q.id]=[...q.a].sort(()=>Math.random()-.5);
- state.orders[q.id].forEach(([label,tags],i)=>{const b=document.createElement('button');b.className='answer';b.innerHTML=`<span>${String.fromCharCode(65+i)}.</span> ${label}`;b.onclick=()=>answer(tags);$('#answers').appendChild(b)});
+ state.orders[q.id].forEach(([label,tags],i)=>{const b=document.createElement('button');b.className='answer';b.innerHTML=`<span>${String.fromCharCode(65+i)}.</span> ${label}`;b.onclick=()=>answer(tags,false,q.duel);$('#answers').appendChild(b)});
 }
-function answer(tags,unknown=false){
+function answer(tags,unknown=false,duel=false){
  state.history.push({scores:{...state.scores},asked:[...state.asked],unknown:state.unknown});
- if(unknown)state.unknown++; else tags.forEach((t,i)=>{
+ if(unknown)state.unknown++; else if(duel){
+  const star=tags[0],rival=RIVALS[star];
+  state.scores[star]=(state.scores[star]||0)+4;
+  state.scores[rival]=(state.scores[rival]||0)-4;
+  tags.slice(1).forEach(t=>state.scores[t]=(state.scores[t]||0)+1);
+ }else tags.forEach((t,i)=>{
   const points=i<2?3:2;
   state.scores[t]=(state.scores[t]||0)+points;
   const rival=RIVALS[t];
@@ -93,7 +115,13 @@ function answer(tags,unknown=false){
 }
 function back(){if(!state.index)return;const h=state.history.pop();state.scores=h.scores;state.asked=h.asked;state.unknown=h.unknown;state.index--;render()}
 function finish(){
- const all=Object.entries(state.scores).filter(([,s])=>s>0).sort((a,b)=>b[1]-a[1]).slice(0,5);
+ let ranked=Object.entries(state.scores).filter(([,s])=>s>0).sort((a,b)=>b[1]-a[1]);
+ const messiRank=ranked.findIndex(([n])=>n==='梅西'),ronaldoRank=ranked.findIndex(([n])=>n==='C罗');
+ if(messiRank>=0&&messiRank<5&&ronaldoRank>=0&&ronaldoRank<5){
+  const messiScore=state.scores['梅西'],ronaldoScore=state.scores['C罗'];
+  ranked=ranked.filter(([n])=>messiScore===ronaldoScore?!['梅西','C罗'].includes(n):n!==(messiScore>ronaldoScore?'C罗':'梅西'));
+ }
+ const all=ranked.slice(0,5);
  const rankBoost=[1.35,1.12,1,.5,.3];
  const adjusted=all.map(([n,s],i)=>[n,Math.pow(s,1.18)*rankBoost[i]]); const sum=adjusted.reduce((a,x)=>a+x[1],0);
  let p=all.length?adjusted.map(([n,s])=>[n,Math.round(s/sum*100)]):[['未表态',100]]; p[0][1]+=100-p.reduce((a,x)=>a+x[1],0); state.result=p;
@@ -114,16 +142,19 @@ function finish(){
 function verdict(top,p,identity){
  const second=p[1]?.[0]||'';
  if(identity.kind==='special')return identity.line;
- if(identity.kind==='neutral')return '你看球，却不急着归队。每一座看台都能借你一个夜晚，没有一面旗帜能永久占领你。';
- const map={梅西:'你相信最好的足球先让人屏住呼吸，再让比分失去解释力。',C罗:'你对决定性时刻有近乎苛刻的迷恋，越大的舞台越值得下注。',巴萨:'你支持的不只是结果，还有一种球该如何移动的固执。',皇马:'你把压力视为舞台灯光：越亮，越应该有人站出来。',阿根廷:'你愿意陪一段漫长故事走到最后，足球对你从来不只九十分钟。',利物浦:'你相信看台能参与比赛，歌声与逆转之间并非巧合。',意大利:'亚平宁的风，什么时候再吹拂大力神杯？',AC米兰:'致旧时代的残党。'};
- const groupMap={红蓝传控派:'足球必须先忠于一种踢法，然后才轮到比分。',梅西宇宙:'从诺坎普到潘帕斯，你追随的是同一位十号留下的引力。',德意志南部阵线:'秩序、强度与胜利——南部之星照着德意志战车前进。',白色七号信徒:'伯纳乌的白与葡萄牙的红，都在等待七号完成最后一击。',红黑亚平宁遗民:'致旧时代的残党。亚平宁的风，什么时候再吹拂大力神杯？'};
+ if(identity.kind==='neutral')return '你没有特别固定的阵营。谁踢得好，你就愿意多看一会儿。';
+ const map={梅西:'人再多，他也能把下一步处理得很简单。你喜欢看这种球。',C罗:'比赛越关键，你越愿意把机会交给他。',姆巴佩:'我已经坐好了…',巴萨:'比分要赢，球也得踢得像巴萨。',皇马:'越是大场面，你越觉得皇马会有人站出来。',阿根廷:'你愿意陪一支队熬很多年，直到它真把杯子举起来。',利物浦:'歌还在唱，比赛就不算结束。',意大利:'亚平宁的风，什么时候再吹拂大力神杯？',AC米兰:'致旧时代的残党。'};
+ const groupMap={红蓝传控派:'比分要赢，球也得踢得好看。',梅西宇宙:'从巴萨到阿根廷，你看的始终是那个十号。',德意志南部阵线:'你喜欢拜仁，也习惯在大赛里等德国队回来。',白色七号信徒:'皇马、葡萄牙、七号。你很清楚自己在等谁进球。',红黑亚平宁遗民:'致旧时代的残党。亚平宁的风，什么时候再吹拂大力神杯？'};
  if(identity.kind==='group')return groupMap[identity.name];
  return (map[top]||`你最强的信号落在「${top}」，但「${second}」让这份忠诚保留了意外。`) + (state.unknown>4?' 你跳过了不少陌生题，结果更偏向你明确表达过的部分。':'');
 }
 function resultText(){const title=state.identity.kind==='neutral'?'中立球迷':`${state.identity.name} ${state.identity.value}%`;return `我的足球身份：${title}｜`+state.result.map(x=>`${x[1]}% ${x[0]}`).join(' · ')+'｜看台成分局'}
 async function hydrateResultImages(results){
  await Promise.all(results.map(async([name])=>{
-  const slot=document.querySelector(`.result-visual[data-name="${name}"]`); if(!slot||name==='未表态')return;
+ const slot=document.querySelector(`.result-visual[data-name="${name}"]`); if(!slot||name==='未表态')return;
+  if(name==='梅西'){
+   const img=new Image(); img.alt='梅西身穿巴萨球衣张开双臂'; img.onload=()=>slot.replaceChildren(img); img.src='messi-user.png'; return;
+  }
   const query=COUNTRIES.has(name)?COUNTRY_QUERY[name]:(IMAGE_QUERY[name]||`${name} football club`);
   try{
    const url=`https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrlimit=1&prop=pageimages&piprop=thumbnail&pithumbsize=${PLAYERS.has(name)?800:500}&format=json&origin=*`;
