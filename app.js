@@ -54,6 +54,13 @@ const SPECIAL_PAIRS=[
  {name:'瓜迪奥拉系',members:['巴萨','曼城'],min:30,line:'那个战术天才一定让你印象深刻。'},
  {name:'the SPECIAL ONE',members:['皇马','国际米兰'],min:25,line:'the SPECIAL ONE'}
 ];
+const PLAYERS=new Set(['梅西','C罗','内马尔','莫德里奇','阿扎尔','格列兹曼','亚马尔','姆巴佩','哈兰德','穆西亚拉']);
+const IMAGE_QUERY={
+ 巴萨:'FC Barcelona',皇马:'Real Madrid CF',马竞:'Atlético Madrid',曼城:'Manchester City FC',曼联:'Manchester United FC',利物浦:'Liverpool FC',阿森纳:'Arsenal FC',热刺:'Tottenham Hotspur FC',切尔西:'Chelsea FC',拜仁:'FC Bayern Munich',多特蒙德:'Borussia Dortmund',AC米兰:'AC Milan',国际米兰:'Inter Milan',尤文图斯:'Juventus FC',巴黎圣日耳曼:'Paris Saint-Germain FC',马赛:'Olympique de Marseille',阿贾克斯:'AFC Ajax',勒沃库森:'Bayer 04 Leverkusen',毕尔巴鄂竞技:'Athletic Bilbao',皇家社会:'Real Sociedad',皇家贝蒂斯:'Real Betis',那不勒斯:'SSC Napoli',法兰克福:'Eintracht Frankfurt',摩纳哥:'AS Monaco FC',里尔:'Lille OSC',里昂:'Olympique Lyonnais',凯尔特人:'Celtic FC',迈阿密国际:'Inter Miami CF',利雅得胜利:'Al Nassr FC',利雅得新月:'Al Hilal SFC',
+ 梅西:'Lionel Messi',C罗:'Cristiano Ronaldo',内马尔:'Neymar',莫德里奇:'Luka Modrić',阿扎尔:'Eden Hazard',格列兹曼:'Antoine Griezmann',亚马尔:'Lamine Yamal',姆巴佩:'Kylian Mbappé',哈兰德:'Erling Haaland',穆西亚拉:'Jamal Musiala'
+};
+const COUNTRIES=new Set(['巴西','阿根廷','法国','德国','英格兰','西班牙','葡萄牙','荷兰','日本','挪威','乌拉圭','克罗地亚','摩洛哥','瑞士','意大利','比利时','加拿大','塞内加尔','哥伦比亚']);
+const COUNTRY_QUERY={巴西:'Brazil national football team',阿根廷:'Argentina national football team',法国:'France national football team',德国:'Germany national football team',英格兰:'England national football team',西班牙:'Spain national football team',葡萄牙:'Portugal national football team',荷兰:'Netherlands national football team',日本:'Japan national football team',挪威:'Norway national football team',乌拉圭:'Uruguay national football team',克罗地亚:'Croatia national football team',摩洛哥:'Morocco national football team',瑞士:'Switzerland national football team',意大利:'Italy national football team',比利时:'Belgium national football team',加拿大:'Canada national soccer team',塞内加尔:'Senegal national football team',哥伦比亚:'Colombia national football team'};
 function reset(){state={index:0,asked:[],history:[],scores:{},unknown:0,orders:{}};}
 function pickQuestion(){
  const unused=Q.filter(q=>!state.asked.includes(q.id));
@@ -95,7 +102,8 @@ function finish(){
  const group=GROUPS.map(g=>({...g,value:g.members.reduce((n,m)=>n+(pct[m]||0),0)})).sort((a,b)=>b.value-a.value)[0];
  const special=SPECIAL_PAIRS.map(g=>({...g,value:g.members.reduce((n,m)=>n+(pct[m]||0),0)})).filter(g=>g.members.every(m=>(pct[m]||0)>g.min)).sort((a,b)=>b.value-a.value)[0];
  state.identity=special?{kind:'special',name:special.name,value:special.value,members:special.members,line:special.line}:group?.value>=40&&(!single||group.value>=single[1])?{kind:'group',name:group.name,value:group.value,members:group.members}:single?{kind:'single',name:single[0],value:single[1],members:[single[0]]}:{kind:'neutral',name:'中立球迷',value:0,members:[]};
- $('#result-bars').innerHTML=p.map(([n,v],i)=>`<div class="result-row"><span class="result-name">${i+1}. ${n}</span><span class="bar-track"><span class="bar-fill" style="width:${v}%"></span></span><b class="result-pct">${v}%</b></div>`).join('');
+ $('#result-bars').innerHTML=p.map(([n,v],i)=>`<div class="result-row"><span class="result-name">${i+1}. ${n}</span><span class="bar-track"><span class="bar-fill" style="width:${v}%"></span></span><b class="result-pct">${v}%</b><span class="result-visual ${PLAYERS.has(n)?'player':'crest'}" data-name="${n}"><span>${n.slice(0,2)}</span></span></div>`).join('');
+ hydrateResultImages(p);
  const top=p[0][0]; $('#result-line').textContent=state.identity.kind==='neutral'?'没有任何阵营越过 40%：你被判定为「中立球迷」。':`${['group','special'].includes(state.identity.kind)?'成分组':'主成分'}「${state.identity.name}」达到 ${state.identity.value}%。`;
  const verdictText=verdict(top,p,state.identity);
  const isMourinho=state.identity.name==='the SPECIAL ONE';
@@ -113,6 +121,17 @@ function verdict(top,p,identity){
  return (map[top]||`你最强的信号落在「${top}」，但「${second}」让这份忠诚保留了意外。`) + (state.unknown>4?' 你跳过了不少陌生题，结果更偏向你明确表达过的部分。':'');
 }
 function resultText(){const title=state.identity.kind==='neutral'?'中立球迷':`${state.identity.name} ${state.identity.value}%`;return `我的足球身份：${title}｜`+state.result.map(x=>`${x[1]}% ${x[0]}`).join(' · ')+'｜看台成分局'}
+async function hydrateResultImages(results){
+ await Promise.all(results.map(async([name])=>{
+  const slot=document.querySelector(`.result-visual[data-name="${name}"]`); if(!slot||name==='未表态')return;
+  const query=COUNTRIES.has(name)?COUNTRY_QUERY[name]:(IMAGE_QUERY[name]||`${name} football club`);
+  try{
+   const url=`https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrlimit=1&prop=pageimages&piprop=thumbnail&pithumbsize=${PLAYERS.has(name)?800:500}&format=json&origin=*`;
+   const data=await fetch(url).then(r=>r.json()); const page=Object.values(data.query?.pages||{})[0]; const src=page?.thumbnail?.source; if(!src)return;
+   const img=new Image(); img.alt=PLAYERS.has(name)?`${name}高清头像`:`${name}队徽`; img.onload=()=>slot.replaceChildren(img); img.src=src;
+  }catch{}
+ }));
+}
 $('#start-btn').onclick=()=>{reset();show('quiz-screen');render()};
 $('#unknown-btn').onclick=()=>answer([],true); $('#back-btn').onclick=back;
 $('#restart-btn').onclick=()=>{reset();show('quiz-screen');render()};
