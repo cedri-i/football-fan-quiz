@@ -50,6 +50,10 @@ const GROUPS=[
  {name:'白色七号信徒',members:['皇马','葡萄牙','C罗']},
  {name:'红黑亚平宁遗民',members:['AC米兰','意大利']}
 ];
+const SPECIAL_PAIRS=[
+ {name:'瓜迪奥拉系',members:['巴萨','曼城'],min:30,line:'那个战术天才一定让你印象深刻。'},
+ {name:'THE SPECIAL ONE',members:['皇马','国际米兰'],min:25,line:'the SPECIAL ONE'}
+];
 function reset(){state={index:0,asked:[],history:[],scores:{},unknown:0};}
 function pickQuestion(){
  const unused=Q.filter(q=>!state.asked.includes(q.id));
@@ -87,14 +91,16 @@ function finish(){
  const pct=Object.fromEntries(p);
  const single=all.length?p.find(([,v])=>v>=40):null;
  const group=GROUPS.map(g=>({...g,value:g.members.reduce((n,m)=>n+(pct[m]||0),0)})).sort((a,b)=>b.value-a.value)[0];
- state.identity=group?.value>=40&&(!single||group.value>=single[1])?{kind:'group',name:group.name,value:group.value,members:group.members}:single?{kind:'single',name:single[0],value:single[1],members:[single[0]]}:{kind:'neutral',name:'中立球迷',value:0,members:[]};
+ const special=SPECIAL_PAIRS.map(g=>({...g,value:g.members.reduce((n,m)=>n+(pct[m]||0),0)})).filter(g=>g.members.every(m=>(pct[m]||0)>g.min)).sort((a,b)=>b.value-a.value)[0];
+ state.identity=special?{kind:'special',name:special.name,value:special.value,members:special.members,line:special.line}:group?.value>=40&&(!single||group.value>=single[1])?{kind:'group',name:group.name,value:group.value,members:group.members}:single?{kind:'single',name:single[0],value:single[1],members:[single[0]]}:{kind:'neutral',name:'中立球迷',value:0,members:[]};
  $('#result-bars').innerHTML=p.map(([n,v],i)=>`<div class="result-row"><span class="result-name">${i+1}. ${n}</span><span class="bar-track"><span class="bar-fill" style="width:${v}%"></span></span><b class="result-pct">${v}%</b></div>`).join('');
- const top=p[0][0]; $('#result-line').textContent=state.identity.kind==='neutral'?'没有任何阵营越过 40%：你被判定为「中立球迷」。':`${state.identity.kind==='group'?'成分组':'主成分'}「${state.identity.name}」达到 ${state.identity.value}%。`;
+ const top=p[0][0]; $('#result-line').textContent=state.identity.kind==='neutral'?'没有任何阵营越过 40%：你被判定为「中立球迷」。':`${['group','special'].includes(state.identity.kind)?'成分组':'主成分'}「${state.identity.name}」达到 ${state.identity.value}%。`;
  $('#verdict').textContent=verdict(top,p,state.identity); $('#result-no').textContent='NO. '+String(Math.floor(Math.random()*9999)).padStart(4,'0');
  show('result-screen');
 }
 function verdict(top,p,identity){
  const second=p[1]?.[0]||'';
+ if(identity.kind==='special')return identity.line;
  if(identity.kind==='neutral')return '你看球，却不急着归队。每一座看台都能借你一个夜晚，没有一面旗帜能永久占领你。';
  const map={梅西:'你相信最好的足球先让人屏住呼吸，再让比分失去解释力。',C罗:'你对决定性时刻有近乎苛刻的迷恋，越大的舞台越值得下注。',巴萨:'你支持的不只是结果，还有一种球该如何移动的固执。',皇马:'你把压力视为舞台灯光：越亮，越应该有人站出来。',阿根廷:'你愿意陪一段漫长故事走到最后，足球对你从来不只九十分钟。',利物浦:'你相信看台能参与比赛，歌声与逆转之间并非巧合。',意大利:'亚平宁的风，什么时候再吹拂大力神杯？',AC米兰:'致旧时代的残党。'};
  const groupMap={红蓝传控派:'足球必须先忠于一种踢法，然后才轮到比分。',梅西宇宙:'从诺坎普到潘帕斯，你追随的是同一位十号留下的引力。',德意志南部阵线:'秩序、强度与胜利——南部之星照着德意志战车前进。',白色七号信徒:'伯纳乌的白与葡萄牙的红，都在等待七号完成最后一击。',红黑亚平宁遗民:'致旧时代的残党。亚平宁的风，什么时候再吹拂大力神杯？'};
