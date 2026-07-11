@@ -54,7 +54,7 @@ const SPECIAL_PAIRS=[
  {name:'瓜迪奥拉系',members:['巴萨','曼城'],min:30,line:'那个战术天才一定让你印象深刻。'},
  {name:'THE SPECIAL ONE',members:['皇马','国际米兰'],min:25,line:'the SPECIAL ONE'}
 ];
-function reset(){state={index:0,asked:[],history:[],scores:{},unknown:0};}
+function reset(){state={index:0,asked:[],history:[],scores:{},unknown:0,orders:{}};}
 function pickQuestion(){
  const unused=Q.filter(q=>!state.asked.includes(q.id));
  if(!unused.length)return null;
@@ -71,7 +71,8 @@ function render(){
  $('#progress').style.width=((state.index)/18*100)+'%';
  $('#back-btn').style.opacity=state.index?'1':'.35';
  $('#answers').innerHTML='';
- q.a.forEach(([label,tags],i)=>{const b=document.createElement('button');b.className='answer';b.innerHTML=`<span>${String.fromCharCode(65+i)}.</span> ${label}`;b.onclick=()=>answer(tags);$('#answers').appendChild(b)});
+ if(!state.orders[q.id])state.orders[q.id]=[...q.a].sort(()=>Math.random()-.5);
+ state.orders[q.id].forEach(([label,tags],i)=>{const b=document.createElement('button');b.className='answer';b.innerHTML=`<span>${String.fromCharCode(65+i)}.</span> ${label}`;b.onclick=()=>answer(tags);$('#answers').appendChild(b)});
 }
 function answer(tags,unknown=false){
  state.history.push({scores:{...state.scores},asked:[...state.asked],unknown:state.unknown});
@@ -86,7 +87,8 @@ function answer(tags,unknown=false){
 function back(){if(!state.index)return;const h=state.history.pop();state.scores=h.scores;state.asked=h.asked;state.unknown=h.unknown;state.index--;render()}
 function finish(){
  const all=Object.entries(state.scores).filter(([,s])=>s>0).sort((a,b)=>b[1]-a[1]).slice(0,5);
- const adjusted=all.map(([n,s],i)=>[n,Math.max(1,s*(1-.055*i))]); const sum=adjusted.reduce((a,x)=>a+x[1],0);
+ const rankBoost=[1.35,1.12,1,.5,.3];
+ const adjusted=all.map(([n,s],i)=>[n,Math.pow(s,1.18)*rankBoost[i]]); const sum=adjusted.reduce((a,x)=>a+x[1],0);
  let p=all.length?adjusted.map(([n,s])=>[n,Math.round(s/sum*100)]):[['未表态',100]]; p[0][1]+=100-p.reduce((a,x)=>a+x[1],0); state.result=p;
  const pct=Object.fromEntries(p);
  const single=all.length?p.find(([,v])=>v>=40):null;
