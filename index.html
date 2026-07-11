@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#2439a8" />
+  <title>看台成分局｜你的足球 DNA</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="masthead">
+    <a class="brand" href="#" aria-label="返回首页"><span>看台</span>成分局</a>
+    <span class="issue">MATCHDAY PAPER · 2026</span>
+  </header>
+
+  <main id="app">
+    <section class="screen hero active" id="start-screen">
+      <div class="hero-copy">
+        <p class="kicker">不是问你支持谁，而是从你的反应里认出你</p>
+        <h1>撕开你的<br><em>足球成分</em></h1>
+        <p class="lede">18—30 道隐晦情境题。球队、国家队与球星混合计算，总和正好 100%。</p>
+        <button class="primary" id="start-btn">领取测试票 <span>→</span></button>
+        <p class="fineprint">没有标准答案 · 遇到陌生题可选“不了解”</p>
+      </div>
+      <aside class="ticket teaser" aria-label="结果示例">
+        <div class="ticket-head"><span>FAN ID</span><b>NO. 10</b></div>
+        <p class="stamp">成分<br>待检</p>
+        <div class="barcode">|||| ||| || |||| | |||</div>
+        <p class="ticket-foot">ADMIT ONE · 从情绪到立场</p>
+      </aside>
+    </section>
+
+    <section class="screen quiz" id="quiz-screen" aria-live="polite">
+      <div class="quiz-top">
+        <button class="back" id="back-btn" aria-label="返回上一题">←</button>
+        <div class="progress-wrap"><div class="progress" id="progress"></div></div>
+        <span class="counter" id="counter">01 / ?</span>
+      </div>
+      <div class="question-card">
+        <p class="question-type" id="question-type">比赛情绪</p>
+        <h2 id="question-text"></h2>
+        <div class="answers" id="answers"></div>
+        <button class="unknown" id="unknown-btn">这题不了解 / 没感觉</button>
+      </div>
+      <p class="adaptive-note">题目会根据你的上一轮选择自动换路</p>
+    </section>
+
+    <section class="screen result" id="result-screen">
+      <div class="result-intro">
+        <p class="kicker">检测完毕 · 你的看台席位已经锁定</p>
+        <h2>你的足球成分</h2>
+        <p id="result-line"></p>
+      </div>
+      <div class="result-ticket ticket" id="share-card">
+        <div class="ticket-head"><span>FAN ID / RESULT</span><b id="result-no">NO. 0000</b></div>
+        <div id="result-bars" class="result-bars"></div>
+        <div class="result-verdict">
+          <span>看台判词</span>
+          <p id="verdict"></p>
+        </div>
+        <div class="barcode">|||| ||| || |||| | ||| ||</div>
+      </div>
+      <div class="result-actions">
+        <button class="primary" id="copy-btn">复制结果</button>
+        <button class="secondary" id="restart-btn">再测一次</button>
+      </div>
+      <p class="copy-status" id="copy-status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <footer><span>一张没有主队队徽的球迷身份证</span><span>MADE FOR THE STANDS</span></footer>
+  <script src="app.js"></script>
+</body>
+</html>
