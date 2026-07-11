@@ -52,7 +52,7 @@ const GROUPS=[
 ];
 const SPECIAL_PAIRS=[
  {name:'瓜迪奥拉系',members:['巴萨','曼城'],min:30,line:'那个战术天才一定让你印象深刻。'},
- {name:'THE SPECIAL ONE',members:['皇马','国际米兰'],min:25,line:'the SPECIAL ONE'}
+ {name:'the SPECIAL ONE',members:['皇马','国际米兰'],min:25,line:'the SPECIAL ONE'}
 ];
 function reset(){state={index:0,asked:[],history:[],scores:{},unknown:0,orders:{}};}
 function pickQuestion(){
@@ -97,7 +97,10 @@ function finish(){
  state.identity=special?{kind:'special',name:special.name,value:special.value,members:special.members,line:special.line}:group?.value>=40&&(!single||group.value>=single[1])?{kind:'group',name:group.name,value:group.value,members:group.members}:single?{kind:'single',name:single[0],value:single[1],members:[single[0]]}:{kind:'neutral',name:'中立球迷',value:0,members:[]};
  $('#result-bars').innerHTML=p.map(([n,v],i)=>`<div class="result-row"><span class="result-name">${i+1}. ${n}</span><span class="bar-track"><span class="bar-fill" style="width:${v}%"></span></span><b class="result-pct">${v}%</b></div>`).join('');
  const top=p[0][0]; $('#result-line').textContent=state.identity.kind==='neutral'?'没有任何阵营越过 40%：你被判定为「中立球迷」。':`${['group','special'].includes(state.identity.kind)?'成分组':'主成分'}「${state.identity.name}」达到 ${state.identity.value}%。`;
- $('#verdict').textContent=verdict(top,p,state.identity); $('#result-no').textContent='NO. '+String(Math.floor(Math.random()*9999)).padStart(4,'0');
+ const verdictText=verdict(top,p,state.identity);
+ const isMourinho=state.identity.name==='the SPECIAL ONE';
+ if(isMourinho)$('#verdict').innerHTML='the <strong>SPECIAL ONE</strong>'; else $('#verdict').textContent=verdictText;
+ $('#mourinho-card').hidden=!isMourinho; $('#result-no').textContent='NO. '+String(Math.floor(Math.random()*9999)).padStart(4,'0');
  show('result-screen');
 }
 function verdict(top,p,identity){
