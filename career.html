@@ -17,25 +17,39 @@
   <main>
     <section class="setup" id="setup">
       <div class="setup-copy">
-        <p class="eyebrow">NEW GAME / 从 17 岁开始</p>
+        <p class="eyebrow">NEW GAME / 最早从 16 岁开始</p>
         <h1>把名字写进<br><em>足球世界。</em></h1>
         <p>一年做一次关键决定。选俱乐部、争位置、定训练方向，然后看能力值、数据与荣誉如何长成一份生涯。</p>
       </div>
       <form class="paper setup-form" id="setup-form">
         <div class="paper-head"><span>青训球员档案</span><b>SEASON 01</b></div>
-        <label class="text-label">球员姓名<input id="player-name" value="小将" maxlength="12" autocomplete="off" /></label>
+        <div class="identity-grid">
+          <label class="text-label">球员姓名<input id="player-name" value="小将" maxlength="12" autocomplete="off" /></label>
+          <label class="text-label">初始年龄<select id="start-age"><option>16</option><option>17</option><option>18</option><option>19</option></select></label>
+        </div>
         <label class="text-label nationality-label">国籍
           <select id="nationality">
-            <option>中国</option><option>阿根廷</option><option>巴西</option><option>法国</option><option>德国</option><option>英格兰</option><option>西班牙</option><option>葡萄牙</option><option>荷兰</option><option>意大利</option><option>克罗地亚</option><option>挪威</option><option>日本</option><option>乌拉圭</option><option>摩洛哥</option><option>瑞士</option><option>哥伦比亚</option>
+            <option>中国</option><option>阿根廷</option><option>巴西</option><option>乌拉圭</option><option>法国</option><option>德国</option><option>英格兰</option><option>苏格兰</option><option>西班牙</option><option>葡萄牙</option><option>意大利</option><option>比利时</option><option>荷兰</option><option>土耳其</option><option>俄罗斯</option><option>沙特阿拉伯</option><option>美国</option><option>克罗地亚</option><option>挪威</option><option>日本</option><option>韩国</option><option>墨西哥</option><option>摩洛哥</option><option>瑞士</option><option>哥伦比亚</option><option>丹麦</option><option>塞内加尔</option><option>尼日利亚</option>
           </select>
         </label>
         <fieldset>
           <legend>位置</legend>
           <div class="radio-grid">
-            <label><input type="radio" name="position" value="边锋" checked><span>边锋<small>速度 / 突破</small></span></label>
-            <label><input type="radio" name="position" value="中场"><span>中场<small>视野 / 组织</small></span></label>
-            <label><input type="radio" name="position" value="前锋"><span>前锋<small>跑位 / 终结</small></span></label>
-            <label><input type="radio" name="position" value="后卫"><span>后卫<small>预判 / 对抗</small></span></label>
+            <label><input type="radio" name="position" value="ST" checked><span>ST<small>中锋 · 终结 / 跑位</small></span></label>
+            <label><input type="radio" name="position" value="LW"><span>LW<small>左边锋 · 速度 / 内切</small></span></label>
+            <label><input type="radio" name="position" value="RW"><span>RW<small>右边锋 · 突破 / 传中</small></span></label>
+            <label><input type="radio" name="position" value="CF"><span>CF<small>影锋 · 串联 / 得分</small></span></label>
+            <label><input type="radio" name="position" value="CAM"><span>CAM<small>前腰 · 创造 / 远射</small></span></label>
+            <label><input type="radio" name="position" value="LM"><span>LM<small>左前卫 · 推进 / 支援</small></span></label>
+            <label><input type="radio" name="position" value="CM"><span>CM<small>中前卫 · 组织 / 覆盖</small></span></label>
+            <label><input type="radio" name="position" value="RM"><span>RM<small>右前卫 · 传中 / 跑动</small></span></label>
+            <label><input type="radio" name="position" value="CDM"><span>CDM<small>后腰 · 拦截 / 出球</small></span></label>
+            <label><input type="radio" name="position" value="LWB"><span>LWB<small>左翼卫 · 往返 / 传中</small></span></label>
+            <label><input type="radio" name="position" value="LB"><span>LB<small>左后卫 · 防守 / 套边</small></span></label>
+            <label><input type="radio" name="position" value="CB"><span>CB<small>中后卫 · 预判 / 对抗</small></span></label>
+            <label><input type="radio" name="position" value="RB"><span>RB<small>右后卫 · 防守 / 套边</small></span></label>
+            <label><input type="radio" name="position" value="RWB"><span>RWB<small>右翼卫 · 往返 / 传中</small></span></label>
+            <label><input type="radio" name="position" value="GK"><span>GK<small>门将 · 扑救 / 稳定</small></span></label>
           </div>
         </fieldset>
         <button class="primary" type="submit">开始生涯 <span>→</span></button>
@@ -46,13 +60,13 @@
     <section class="game" id="game" hidden>
       <aside class="passport paper">
         <div class="passport-top">
-          <div class="shirt"><b id="shirt-no">17</b><span id="player-position">边锋</span></div>
+          <div class="shirt"><b id="shirt-no">9</b><span id="player-position">ST</span></div>
           <div><p class="eyebrow dark">PLAYER ID</p><h2 id="player-card-name">小将</h2><p id="current-club">阿贾克斯</p><p class="nationality" id="player-nationality">中国</p></div>
         </div>
         <div class="nationality-migration" id="nationality-migration" hidden>
           <span>旧存档补录国籍</span><select id="passport-nationality"></select><button id="lock-nationality">确认并锁定</button>
         </div>
-        <div class="overall"><span>综合能力</span><strong id="overall">67</strong><i id="potential">潜力 91</i></div>
+        <div class="overall"><span>综合能力</span><strong id="overall">67</strong></div>
         <div class="attributes" id="attributes"></div>
         <div class="career-numbers">
           <div><span>年龄</span><b id="age">17</b></div><div><span>身价</span><b id="value">€3M</b></div>
