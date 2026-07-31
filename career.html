@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1f3799" />
+  <title>球员生涯模拟｜看台成分局</title>
+  <link rel="stylesheet" href="career.css" />
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="masthead">
+    <a class="brand" href="index.html"><span>看台</span>成分局</a>
+    <div class="header-meta"><span>PLAYER CAREER</span><b id="save-label">自动存档</b></div>
+  </header>
+
+  <main>
+    <section class="setup" id="setup">
+      <div class="setup-copy">
+        <p class="eyebrow">NEW GAME / 从 17 岁开始</p>
+        <h1>把名字写进<br><em>足球世界。</em></h1>
+        <p>一年做一次关键决定。选俱乐部、争位置、定训练方向，然后看能力值、数据与荣誉如何长成一份生涯。</p>
+      </div>
+      <form class="paper setup-form" id="setup-form">
+        <div class="paper-head"><span>青训球员档案</span><b>SEASON 01</b></div>
+        <label class="text-label">球员姓名<input id="player-name" value="小将" maxlength="12" autocomplete="off" /></label>
+        <fieldset>
+          <legend>位置</legend>
+          <div class="radio-grid">
+            <label><input type="radio" name="position" value="边锋" checked><span>边锋<small>速度 / 突破</small></span></label>
+            <label><input type="radio" name="position" value="中场"><span>中场<small>视野 / 组织</small></span></label>
+            <label><input type="radio" name="position" value="前锋"><span>前锋<small>跑位 / 终结</small></span></label>
+            <label><input type="radio" name="position" value="后卫"><span>后卫<small>预判 / 对抗</small></span></label>
+          </div>
+        </fieldset>
+        <button class="primary" type="submit">开始生涯 <span>→</span></button>
+        <button class="continue" id="continue" type="button" hidden>继续上次生涯</button>
+      </form>
+    </section>
+
+    <section class="game" id="game" hidden>
+      <aside class="passport paper">
+        <div class="passport-top">
+          <div class="shirt"><b id="shirt-no">17</b><span id="player-position">边锋</span></div>
+          <div><p class="eyebrow dark">PLAYER ID</p><h2 id="player-card-name">小将</h2><p id="current-club">阿贾克斯</p></div>
+        </div>
+        <div class="overall"><span>综合能力</span><strong id="overall">67</strong><i id="potential">潜力 91</i></div>
+        <div class="attributes" id="attributes"></div>
+        <div class="career-numbers">
+          <div><span>年龄</span><b id="age">17</b></div><div><span>身价</span><b id="value">€3M</b></div>
+          <div><span>出场</span><b id="apps">0</b></div><div><span>冠军</span><b id="trophies">0</b></div>
+        </div>
+        <button class="reset" id="reset">重新开档</button>
+      </aside>
+
+      <section class="desk">
+        <div class="season-head">
+          <div><p class="eyebrow">TRANSFER WINDOW</p><h2 id="season-title">2026 / 27 赛季</h2></div>
+          <div class="career-progress"><span id="season-count">第 1 季</span><i><b id="progress"></b></i></div>
+        </div>
+
+        <div class="decision-board">
+          <section class="control-block">
+            <div class="section-title"><span>本季发展方向</span><small>只选一项</small></div>
+            <div class="plan-grid" id="plans"></div>
+          </section>
+
+          <section class="control-block">
+            <div class="section-title"><span>你要怎样踢这一年</span><small>收益与风险联动</small></div>
+            <div class="plan-grid strategy-grid" id="strategies"></div>
+          </section>
+
+          <section class="offers-block">
+            <div class="section-title"><span>合同与转会</span><small>角色承诺比队名更重要</small></div>
+            <div class="offers" id="offers"></div>
+          </section>
+
+          <div class="decision-footer">
+            <p id="decision-note">选好训练方向、赛季策略和合同。</p>
+            <button class="primary simulate" id="simulate" disabled>签约并踢完赛季 <span>→</span></button>
+          </div>
+        </div>
+
+        <section class="timeline-wrap">
+          <div class="section-title"><span>生涯履历</span><small id="honor-count">0 项个人荣誉</small></div>
+          <div class="timeline" id="timeline"><p class="empty">第一份职业合同还没有签字。</p></div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <div class="modal" id="report" hidden>
+    <article class="report-card paper">
+      <div class="paper-head"><span>赛季报告</span><b id="report-year"></b></div>
+      <p class="eyebrow dark" id="report-kicker">SEASON COMPLETE</p>
+      <h2 id="report-title"></h2>
+      <p id="report-summary"></p>
+      <div class="report-stats" id="report-stats"></div>
+      <div class="honors" id="report-honors"></div>
+      <button class="primary" id="next-season">进入下个转会窗 <span>→</span></button>
+    </article>
+  </div>
+  <script src="career.js"></script>
+</body>
+</html>
