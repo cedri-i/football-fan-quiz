@@ -58,14 +58,15 @@ function initialAttrs(position){
  return a;
 }
 function calcOverall(attrs,position){return Math.round(POS_STATS[position].keys.reduce((n,k)=>n+attrs[k],0)/3)}
-function newGame(name,position,nationality){const attrs=initialAttrs(position);return{name,position,nationality,number:position==='前锋'?9:position==='中场'?8:position==='后卫'?4:17,age:17,year:2026,season:1,potential:rint(88,94),attrs,overall:calcOverall(attrs,position),club:null,value:3.5,reputation:8,totalApps:0,totalGoals:0,totalAssists:0,totalNationalApps:0,totalNationalGoals:0,trophyCount:0,honors:[],history:[],retired:false,finalissimaYear:null}}
+function newGame(name,position,nationality){const attrs=initialAttrs(position);return{name,position,nationality,needsNationality:false,number:position==='前锋'?9:position==='中场'?8:position==='后卫'?4:17,age:17,year:2026,season:1,potential:rint(88,94),attrs,overall:calcOverall(attrs,position),club:null,value:3.5,reputation:8,totalApps:0,totalGoals:0,totalAssists:0,totalNationalApps:0,totalNationalGoals:0,trophyCount:0,honors:[],history:[],retired:false,finalissimaYear:null}}
 function save(){localStorage.setItem(SAVE_KEY,JSON.stringify(game));$('#save-label').textContent='已存档'}
-function load(){try{const saved=JSON.parse(localStorage.getItem(SAVE_KEY));if(!saved)return null;saved.nationality=saved.nationality||'中国';saved.totalNationalApps=saved.totalNationalApps||0;saved.totalNationalGoals=saved.totalNationalGoals||0;(saved.history||[]).forEach(r=>{r.teamHonors=(r.teamHonors||[]).map(h=>h==='国内杯冠军'?(CUP_BY_LEAGUE[r.club?.league]||'杯赛冠军'):h);r.nationalHonors=r.nationalHonors||[]});return saved}catch{return null}}
+function load(){try{const saved=JSON.parse(localStorage.getItem(SAVE_KEY));if(!saved)return null;if(!saved.nationality){saved.nationality='中国';saved.needsNationality=true}saved.totalNationalApps=saved.totalNationalApps||0;saved.totalNationalGoals=saved.totalNationalGoals||0;(saved.history||[]).forEach(r=>{r.teamHonors=(r.teamHonors||[]).map(h=>h==='国内杯冠军'?(CUP_BY_LEAGUE[r.club?.league]||'杯赛冠军'):h);r.nationalHonors=r.nationalHonors||[]});return saved}catch{return null}}
 function formatMoney(v){return v>=100?`€${Math.round(v)}M`:v>=10?`€${v.toFixed(0)}M`:`€${v.toFixed(1)}M`}
 function yearLabel(){return `${game.year} / ${String(game.year+1).slice(-2)}`}
 
 function renderGame(){
  $('#setup').hidden=true;$('#game').hidden=false;$('#player-card-name').textContent=game.name;$('#player-position').textContent=game.position;$('#shirt-no').textContent=game.number;$('#current-club').textContent=game.club?.name||'等待第一份职业合同';$('#player-nationality').textContent=game.nationality;
+ $('#nationality-migration').hidden=!game.needsNationality;if(game.needsNationality)$('#passport-nationality').innerHTML=Object.keys(NATIONS).map(n=>`<option${n===game.nationality?' selected':''}>${n}</option>`).join('');
  $('#overall').textContent=game.overall;$('#potential').textContent=`潜力 ${game.potential}`;$('#age').textContent=game.age;$('#value').textContent=formatMoney(game.value);$('#apps').textContent=game.totalApps;$('#trophies').textContent=game.trophyCount;$('#national-apps').textContent=game.totalNationalApps;$('#national-goals').textContent=game.totalNationalGoals;
  $('#season-title').textContent=`${yearLabel()} 赛季`;$('#season-count').textContent=`第 ${game.season} 季`;$('#progress').style.setProperty('--p',`${Math.min(100,game.season/18*100)}%`);
  const labels={tech:'技术',pace:'速度',shoot:'射门',vision:'视野',physical:'身体',defense:'防守',composure:'沉着'};
@@ -147,4 +148,5 @@ function renderHonorCabinet(){
 
 $('#setup-form').onsubmit=e=>{e.preventDefault();const name=$('#player-name').value.trim()||'小将';const position=document.querySelector('input[name="position"]:checked').value;game=newGame(name,position,$('#nationality').value);renderGame()};
 $('#simulate').onclick=simulateSeason;$('#next-season').onclick=nextSeason;$('#reset').onclick=()=>{if(confirm('确定删除当前生涯并重新开档？')){localStorage.removeItem(SAVE_KEY);location.reload()}};
+$('#lock-nationality').onclick=()=>{game.nationality=$('#passport-nationality').value;game.needsNationality=false;renderGame()};
 const existing=load();if(existing){$('#continue').hidden=false;$('#continue').onclick=()=>{game=existing;renderGame()}}
