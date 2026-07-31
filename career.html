@@ -24,6 +24,11 @@
       <form class="paper setup-form" id="setup-form">
         <div class="paper-head"><span>青训球员档案</span><b>SEASON 01</b></div>
         <label class="text-label">球员姓名<input id="player-name" value="小将" maxlength="12" autocomplete="off" /></label>
+        <label class="text-label nationality-label">国籍
+          <select id="nationality">
+            <option>中国</option><option>阿根廷</option><option>巴西</option><option>法国</option><option>德国</option><option>英格兰</option><option>西班牙</option><option>葡萄牙</option><option>荷兰</option><option>意大利</option><option>克罗地亚</option><option>挪威</option><option>日本</option><option>乌拉圭</option><option>摩洛哥</option><option>瑞士</option><option>哥伦比亚</option>
+          </select>
+        </label>
         <fieldset>
           <legend>位置</legend>
           <div class="radio-grid">
@@ -42,14 +47,19 @@
       <aside class="passport paper">
         <div class="passport-top">
           <div class="shirt"><b id="shirt-no">17</b><span id="player-position">边锋</span></div>
-          <div><p class="eyebrow dark">PLAYER ID</p><h2 id="player-card-name">小将</h2><p id="current-club">阿贾克斯</p></div>
+          <div><p class="eyebrow dark">PLAYER ID</p><h2 id="player-card-name">小将</h2><p id="current-club">阿贾克斯</p><p class="nationality" id="player-nationality">中国</p></div>
         </div>
         <div class="overall"><span>综合能力</span><strong id="overall">67</strong><i id="potential">潜力 91</i></div>
         <div class="attributes" id="attributes"></div>
         <div class="career-numbers">
           <div><span>年龄</span><b id="age">17</b></div><div><span>身价</span><b id="value">€3M</b></div>
           <div><span>出场</span><b id="apps">0</b></div><div><span>冠军</span><b id="trophies">0</b></div>
+          <div><span>国家队出场</span><b id="national-apps">0</b></div><div><span>国家队进球</span><b id="national-goals">0</b></div>
         </div>
+        <section class="honor-cabinet">
+          <div><span>职业生涯总荣誉</span><b id="total-honor-count">0</b></div>
+          <div class="career-honors" id="career-honors"><small>荣誉室还是空的</small></div>
+        </section>
         <button class="reset" id="reset">重新开档</button>
       </aside>
 
@@ -82,7 +92,7 @@
         </div>
 
         <section class="timeline-wrap">
-          <div class="section-title"><span>生涯履历</span><small id="honor-count">0 项个人荣誉</small></div>
+          <div class="section-title"><span>生涯履历</span><small id="honor-count">0 项荣誉</small></div>
           <div class="timeline" id="timeline"><p class="empty">第一份职业合同还没有签字。</p></div>
         </section>
       </section>
