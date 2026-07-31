@@ -2,31 +2,17 @@ const $=s=>document.querySelector(s);
 const clamp=(v,min=0,max=99)=>Math.max(min,Math.min(max,v));
 const SAVE_KEY='football-career-v2';
 
+const crestSlug=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\b(fc|cf|afc|ac|sc|sfc|cfc|calcio|football club)\b/g,'').replace(/[^a-z0-9]+/g,' ').trim().replace(/ /g,'-');
+const C=(name,abbr,league,power,color,style,query)=>({name,abbr,league,power,color,style,query,crest:`assets/crests-v2/${crestSlug(query)}.png`});
 const CLUBS=[
- {name:'葡萄牙体育',abbr:'SCP',league:'葡超',power:72,color:'#168653',style:'youth'},
- {name:'本菲卡',abbr:'SLB',league:'葡超',power:76,color:'#d9272e',style:'attack'},
- {name:'阿贾克斯',abbr:'AJA',league:'荷甲',power:73,color:'#d51f2b',style:'youth'},
- {name:'河床',abbr:'CARP',league:'阿甲',power:72,color:'#d82035',style:'attack'},
- {name:'多特蒙德',abbr:'BVB',league:'德甲',power:81,color:'#d2b900',style:'youth'},
- {name:'勒沃库森',abbr:'B04',league:'德甲',power:83,color:'#b7192b',style:'attack'},
- {name:'马赛',abbr:'OM',league:'法甲',power:78,color:'#199bd8',style:'physical'},
- {name:'里昂',abbr:'OL',league:'法甲',power:77,color:'#1f4f9f',style:'youth'},
- {name:'那不勒斯',abbr:'NAP',league:'意甲',power:84,color:'#2b91c8',style:'attack'},
- {name:'罗马',abbr:'ROM',league:'意甲',power:81,color:'#8f1837',style:'physical'},
- {name:'阿森纳',abbr:'ARS',league:'英超',power:87,color:'#d92332',style:'attack'},
- {name:'利物浦',abbr:'LIV',league:'英超',power:89,color:'#be1e2d',style:'physical'},
- {name:'曼联',abbr:'MUN',league:'英超',power:84,color:'#c8202f',style:'star'},
- {name:'曼城',abbr:'MCI',league:'英超',power:92,color:'#69aee7',style:'attack'},
- {name:'切尔西',abbr:'CHE',league:'英超',power:85,color:'#16469d',style:'youth'},
- {name:'国际米兰',abbr:'INT',league:'意甲',power:88,color:'#16439b',style:'physical'},
- {name:'AC米兰',abbr:'ACM',league:'意甲',power:85,color:'#b31f2b',style:'star'},
- {name:'尤文图斯',abbr:'JUV',league:'意甲',power:84,color:'#242424',style:'physical'},
- {name:'拜仁',abbr:'FCB',league:'德甲',power:91,color:'#c81e42',style:'star'},
- {name:'巴黎圣日耳曼',abbr:'PSG',league:'法甲',power:90,color:'#172b55',style:'star'},
- {name:'马德里竞技',abbr:'ATM',league:'西甲',power:86,color:'#c62939',style:'physical'},
- {name:'巴塞罗那',abbr:'BAR',league:'西甲',power:91,color:'#263a85',style:'youth'},
- {name:'皇家马德里',abbr:'RMA',league:'西甲',power:94,color:'#b6a56a',style:'star'}
-];
+ ['阿森纳','ARS','英超',88,'#d92332','attack','Arsenal FC'],['阿斯顿维拉','AVL','英超',84,'#7a244b','attack','Aston Villa FC'],['伯恩茅斯','BOU','英超',78,'#c8202f','physical','AFC Bournemouth'],['布伦特福德','BRE','英超',78,'#d61f2c','physical','Brentford FC'],['布莱顿','BHA','英超',80,'#2374c6','youth','Brighton & Hove Albion FC'],['伯恩利','BUR','英超',72,'#6e1b46','physical','Burnley FC'],['切尔西','CHE','英超',86,'#16469d','youth','Chelsea FC'],['水晶宫','CRY','英超',81,'#1b4a9e','physical','Crystal Palace FC'],['埃弗顿','EVE','英超',78,'#244e9b','physical','Everton FC'],['富勒姆','FUL','英超',79,'#202020','attack','Fulham FC'],['利兹联','LEE','英超',74,'#1d5aa7','physical','Leeds United FC'],['利物浦','LIV','英超',90,'#be1e2d','physical','Liverpool FC'],['曼城','MCI','英超',92,'#69aee7','attack','Manchester City FC'],['曼联','MUN','英超',84,'#c8202f','star','Manchester United FC'],['纽卡斯尔联','NEW','英超',85,'#222222','physical','Newcastle United FC'],['诺丁汉森林','NFO','英超',81,'#d51f2b','physical','Nottingham Forest FC'],['桑德兰','SUN','英超',73,'#d82032','youth','Sunderland AFC'],['热刺','TOT','英超',83,'#15264b','attack','Tottenham Hotspur FC'],['西汉姆联','WHU','英超',78,'#7a263a','physical','West Ham United FC'],['狼队','WOL','英超',77,'#d99d19','physical','Wolverhampton Wanderers FC'],
+ ['毕尔巴鄂竞技','ATH','西甲',84,'#c52232','physical','Athletic Bilbao'],['马德里竞技','ATM','西甲',87,'#c62939','physical','Atletico Madrid'],['奥萨苏纳','OSA','西甲',78,'#a51e2f','physical','CA Osasuna'],['塞尔塔','CEL','西甲',79,'#69a7dd','attack','Celta Vigo'],['阿拉维斯','ALA','西甲',74,'#17589a','physical','Deportivo Alaves'],['巴塞罗那','BAR','西甲',92,'#263a85','youth','FC Barcelona'],['皇家贝蒂斯','BET','西甲',82,'#208a55','attack','Real Betis'],['埃尔切','ELC','西甲',71,'#2c9a58','physical','Elche CF'],['西班牙人','ESP','西甲',75,'#3186c8','physical','RCD Espanyol'],['赫塔费','GET','西甲',77,'#23529b','physical','Getafe CF'],['赫罗纳','GIR','西甲',80,'#cf2838','attack','Girona FC'],['莱万特','LEV','西甲',71,'#a23b62','attack','Levante UD'],['马略卡','MLL','西甲',77,'#c93439','physical','RCD Mallorca'],['巴列卡诺','RAY','西甲',76,'#d92835','physical','Rayo Vallecano'],['皇家马德里','RMA','西甲',94,'#b6a56a','star','Real Madrid CF'],['皇家奥维耶多','OVI','西甲',71,'#2454a2','physical','Real Oviedo'],['皇家社会','RSO','西甲',82,'#2b7dbb','youth','Real Sociedad'],['塞维利亚','SEV','西甲',79,'#c92a38','star','Sevilla FC'],['瓦伦西亚','VAL','西甲',78,'#e19327','youth','Valencia CF'],['比利亚雷亚尔','VIL','西甲',83,'#d5b91f','attack','Villarreal CF'],
+ ['亚特兰大','ATA','意甲',85,'#2455a4','attack','Atalanta BC'],['博洛尼亚','BOL','意甲',82,'#9d2439','physical','Bologna FC'],['卡利亚里','CAG','意甲',74,'#9d2439','physical','Cagliari Calcio'],['科莫','COM','意甲',80,'#2460a5','attack','Como 1907'],['克雷莫内塞','CRE','意甲',70,'#b12735','physical','US Cremonese'],['佛罗伦萨','FIO','意甲',82,'#63358d','attack','ACF Fiorentina'],['热那亚','GEN','意甲',76,'#9f243a','physical','Genoa CFC'],['国际米兰','INT','意甲',89,'#16439b','physical','Inter Milan'],['尤文图斯','JUV','意甲',85,'#242424','physical','Juventus FC'],['拉齐奥','LAZ','意甲',82,'#66a3d8','attack','SS Lazio'],['莱切','LEC','意甲',73,'#d3a921','physical','US Lecce'],['AC米兰','ACM','意甲',86,'#b31f2b','star','AC Milan'],['那不勒斯','NAP','意甲',86,'#2b91c8','attack','SSC Napoli'],['帕尔马','PAR','意甲',75,'#e2b72c','youth','Parma Calcio 1913'],['比萨','PIS','意甲',70,'#214c92','physical','Pisa SC'],['罗马','ROM','意甲',83,'#8f1837','physical','AS Roma'],['萨索洛','SAS','意甲',75,'#15955d','attack','US Sassuolo'],['都灵','TOR','意甲',78,'#7e283a','physical','Torino FC'],['乌迪内斯','UDI','意甲',76,'#313131','youth','Udinese Calcio'],['维罗纳','VER','意甲',73,'#244f91','physical','Hellas Verona FC'],
+ ['奥格斯堡','AUG','德甲',74,'#a92431','physical','FC Augsburg'],['柏林联合','FCU','德甲',76,'#d12431','physical','Union Berlin'],['不莱梅','SVW','德甲',77,'#168b59','attack','Werder Bremen'],['多特蒙德','BVB','德甲',85,'#d2b900','youth','Borussia Dortmund'],['法兰克福','SGE','德甲',84,'#bd2632','attack','Eintracht Frankfurt'],['弗赖堡','SCF','德甲',79,'#c72b39','physical','SC Freiburg'],['汉堡','HSV','德甲',74,'#285b9d','star','Hamburger SV'],['海登海姆','FCH','德甲',72,'#24589d','physical','FC Heidenheim'],['霍芬海姆','TSG','德甲',76,'#2670b8','youth','TSG 1899 Hoffenheim'],['科隆','KOE','德甲',74,'#cf2937','star','FC Koln'],['莱比锡','RBL','德甲',84,'#d32b3d','youth','RB Leipzig'],['勒沃库森','B04','德甲',87,'#b7192b','attack','Bayer Leverkusen'],['拜仁','FCB','德甲',92,'#c81e42','star','Bayern Munich'],['美因茨','M05','德甲',78,'#c92737','physical','Mainz 05'],['门兴','BMG','德甲',79,'#202020','attack','Borussia Monchengladbach'],['圣保利','STP','德甲',73,'#5c3427','physical','FC St Pauli'],['斯图加特','VFB','德甲',84,'#d22435','attack','VfB Stuttgart'],['沃尔夫斯堡','WOB','德甲',78,'#4c9c47','physical','VfL Wolfsburg'],
+ ['昂热','SCO','法甲',72,'#202020','physical','Angers SCO'],['欧塞尔','AJA','法甲',74,'#2661a6','youth','AJ Auxerre'],['布雷斯特','SB29','法甲',78,'#cc2635','physical','Stade Brestois 29'],['勒阿弗尔','HAC','法甲',72,'#6e9ed0','physical','Le Havre AC'],['朗斯','RCL','法甲',81,'#c72c36','physical','RC Lens'],['里尔','LOSC','法甲',83,'#c92738','youth','Lille OSC'],['洛里昂','FCL','法甲',72,'#e58232','attack','FC Lorient'],['里昂','OL','法甲',80,'#1f4f9f','youth','Olympique Lyonnais'],['马赛','OM','法甲',83,'#199bd8','physical','Olympique Marseille'],['梅斯','FCM','法甲',71,'#8e243d','physical','FC Metz'],['摩纳哥','ASM','法甲',84,'#d02c3c','youth','AS Monaco'],['南特','FCN','法甲',74,'#d2bd24','youth','FC Nantes'],['尼斯','OGCN','法甲',81,'#bb2633','physical','OGC Nice'],['巴黎FC','PFC','法甲',73,'#244c8c','youth','Paris FC'],['巴黎圣日耳曼','PSG','法甲',92,'#172b55','star','Paris Saint-Germain'],['雷恩','SRFC','法甲',80,'#c32936','youth','Stade Rennais FC'],['斯特拉斯堡','RCSA','法甲',80,'#2e72b7','youth','RC Strasbourg Alsace'],['图卢兹','TFC','法甲',77,'#6d3a8b','attack','Toulouse FC'],
+ ['本菲卡','SLB','葡超',82,'#d9272e','attack','SL Benfica'],['葡萄牙体育','SCP','葡超',84,'#168653','youth','Sporting CP'],['波尔图','FCP','葡超',82,'#2363a6','physical','FC Porto'],['布拉加','SCB','葡超',78,'#c92a39','attack','SC Braga'],['阿贾克斯','AJA','荷甲',80,'#d51f2b','youth','AFC Ajax'],['埃因霍温','PSV','荷甲',83,'#d72737','attack','PSV Eindhoven'],['费耶诺德','FEY','荷甲',82,'#c52937','physical','Feyenoord'],['阿尔克马尔','AZ','荷甲',78,'#c92331','youth','AZ Alkmaar'],
+ ['河床','CARP','阿甲',81,'#d82035','attack','River Plate'],['博卡青年','BOC','阿甲',80,'#214d91','physical','Boca Juniors'],['弗拉门戈','FLA','巴甲',83,'#c22534','star','Flamengo'],['帕尔梅拉斯','PAL','巴甲',83,'#198250','physical','Palmeiras'],['迈阿密国际','MIA','美职联',76,'#dc5b83','star','Inter Miami CF'],['洛杉矶FC','LAFC','美职联',75,'#b79a54','attack','Los Angeles FC'],['利雅得胜利','NAS','沙特联',80,'#d8bd22','star','Al Nassr FC'],['利雅得新月','HIL','沙特联',83,'#2765af','star','Al Hilal SFC'],['凯尔特人','CEL','苏超',78,'#198750','physical','Celtic FC'],['流浪者','RAN','苏超',77,'#26529b','physical','Rangers FC'],['加拉塔萨雷','GAL','土超',81,'#c93239','star','Galatasaray SK']
+].map(x=>C(...x));
 
 const PLANS=[
  {id:'tech',name:'技术',note:'技术成长更快，进攻数据更稳定',attr:'tech',bonus:1.45},
@@ -38,7 +24,15 @@ const STRATEGIES=[
  {id:'numbers',name:'数据',note:'数据上限更高，也更容易受伤'},
  {id:'trophies',name:'荣誉',note:'接受轮换，豪门适应与夺冠率提高'}
 ];
-const CUP_BY_LEAGUE={英超:'足总杯',西甲:'国王杯',意甲:'意大利杯',德甲:'德国杯',法甲:'法国杯',葡超:'葡萄牙杯',荷甲:'荷兰杯',阿甲:'阿根廷杯'};
+const ICONS={
+ tech:'<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><path d="m16 10 4 3-1.5 5h-5L12 13l4-3Zm-4 3-5 1m13-1 5 1m-6.5 4 3 5m-8-5-3 5"/></svg>',
+ body:'<svg viewBox="0 0 32 32"><path d="M7 13v6m4-9v12m10-12v12m4-9v6M7 16h18M4 12h3v8H4zm21 0h3v8h-3z"/></svg>',
+ mind:'<svg viewBox="0 0 32 32"><circle cx="16" cy="8" r="3"/><circle cx="8" cy="22" r="3"/><circle cx="24" cy="22" r="3"/><path d="m14.5 10.5-5 8.5m8-8.5 5 8.5M11 22h10"/></svg>',
+ minutes:'<svg viewBox="0 0 32 32"><circle cx="16" cy="17" r="11"/><path d="M16 11v7l5 3M12 4h8"/></svg>',
+ numbers:'<svg viewBox="0 0 32 32"><path d="M6 26V15h5v11m5 0V9h5v17m5 0V5h-5"/><path d="M4 26h24"/></svg>',
+ trophies:'<svg viewBox="0 0 32 32"><path d="M10 5h12v7c0 5-2.5 8-6 8s-6-3-6-8V5Zm2 20h8m-4-5v5M10 8H6v3c0 3 2 5 5 5m11-8h4v3c0 3-2 5-5 5"/></svg>'
+};
+const CUP_BY_LEAGUE={英超:'足总杯',西甲:'国王杯',意甲:'意大利杯',德甲:'德国杯',法甲:'法国杯',葡超:'葡萄牙杯',荷甲:'荷兰杯',阿甲:'阿根廷杯',巴甲:'巴西杯',美职联:'美国公开杯',沙特联:'沙王冠',苏超:'苏格兰杯',土超:'土耳其杯'};
 const NATIONS={
  中国:{strength:63,confed:'AS'},阿根廷:{strength:91,confed:'SA'},巴西:{strength:91,confed:'SA'},法国:{strength:92,confed:'EU'},德国:{strength:88,confed:'EU'},英格兰:{strength:90,confed:'EU'},西班牙:{strength:91,confed:'EU'},葡萄牙:{strength:89,confed:'EU'},荷兰:{strength:87,confed:'EU'},意大利:{strength:86,confed:'EU'},克罗地亚:{strength:83,confed:'EU'},挪威:{strength:81,confed:'EU'},日本:{strength:80,confed:'AS'},乌拉圭:{strength:84,confed:'SA'},摩洛哥:{strength:82,confed:'AF'},瑞士:{strength:81,confed:'EU'},哥伦比亚:{strength:84,confed:'SA'}
 };
@@ -77,36 +71,43 @@ function renderGame(){
 
 function renderChoices(){
  chosenPlan=chosenStrategy=chosenOffer=null;
- $('#plans').innerHTML=PLANS.map(x=>`<button class="plan" data-plan="${x.id}"><b>${x.name}</b><small>${x.note}</small></button>`).join('');
- $('#strategies').innerHTML=STRATEGIES.map(x=>`<button class="plan" data-strategy="${x.id}"><b>${x.name}</b><small>${x.note}</small></button>`).join('');
+ $('#plans').innerHTML=PLANS.map(x=>`<button class="plan" data-plan="${x.id}"><span class="choice-icon" aria-hidden="true">${ICONS[x.id]}</span><span class="choice-copy"><b>${x.name}</b><small>${x.note}</small></span></button>`).join('');
+ $('#strategies').innerHTML=STRATEGIES.map(x=>`<button class="plan" data-strategy="${x.id}"><span class="choice-icon" aria-hidden="true">${ICONS[x.id]}</span><span class="choice-copy"><b>${x.name}</b><small>${x.note}</small></span></button>`).join('');
  document.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>selectOne('plan',b.dataset.plan,b));document.querySelectorAll('[data-strategy]').forEach(b=>b.onclick=()=>selectOne('strategy',b.dataset.strategy,b));
- offerList=generateOffers();$('#offers').innerHTML=offerList.map((o,i)=>offerHTML(o,i)).join('');document.querySelectorAll('[data-offer]').forEach(b=>b.onclick=()=>selectOffer(+b.dataset.offer,b));updateReady();
+ offerList=generateOffers();$('#offers').innerHTML=offerList.map((o,i)=>offerHTML(o,i)).join('');document.querySelectorAll('[data-offer]').forEach(b=>b.onclick=()=>selectOffer(+b.dataset.offer,b));hydrateOfferBadges();updateReady();
 }
 function selectOne(type,id,button){const selector=type==='plan'?'[data-plan]':'[data-strategy]';document.querySelectorAll(selector).forEach(x=>x.classList.toggle('selected',x===button));if(type==='plan')chosenPlan=PLANS.find(x=>x.id===id);else chosenStrategy=STRATEGIES.find(x=>x.id===id);updateReady()}
 function selectOffer(i,button){chosenOffer=offerList[i];document.querySelectorAll('[data-offer]').forEach(x=>x.classList.toggle('selected',x===button));updateReady()}
-function updateReady(){const ready=chosenPlan&&chosenStrategy&&chosenOffer;$('#simulate').disabled=!ready;$('#decision-note').textContent=!chosenPlan?'先定发展方向。':!chosenStrategy?'再选这一年怎么踢。':!chosenOffer?'最后签一份合同。':`${chosenOffer.club.name} · ${chosenOffer.role} · ${chosenPlan.name}。`}
+function updateReady(){const ready=chosenPlan&&chosenStrategy&&chosenOffer;$('#simulate').disabled=!ready;$('#decision-note').textContent=!chosenPlan?'先定发展方向。':!chosenStrategy?'再选这一年怎么踢。':!chosenOffer?'最后签一份合同。':`${chosenOffer.moveType} · ${chosenOffer.club.name} · ${chosenOffer.role} · ${chosenPlan.name}。`}
 
 function generateOffers(){
- const current=game.club;const low=game.overall<72?68:game.overall<80?73:game.overall<87?79:84;const high=Math.min(95,game.overall+8+game.reputation*.04);
- let pool=CLUBS.filter(c=>c.power>=low&&c.power<=high&&c.name!==current?.name);
- if(pool.length<3)pool=CLUBS.filter(c=>c.name!==current?.name&&c.power<=high+4);
- pool=[...pool].sort(()=>Math.random()-.5).slice(0,current?3:4);
- const clubs=current?[current,...pool]:pool;
- return clubs.map((club,i)=>{const gap=game.overall-club.power;const role=gap>=3?'绝对核心':gap>=-2?'主力':gap>=-7?'轮换':'替补';const wage=Math.max(8,Math.round((club.power-62)*7+(game.overall-60)*5+rand(-15,25)));return{club,role,wage,stay:!!current&&i===0,fit:fitScore(club),promise:role==='绝对核心'?'围绕你建队':role==='主力'?'稳定首发':role==='轮换'?'竞争主力':'杯赛机会'}})
+ const current=game.club;const decision=clubWindowDecision(current);const total=rint(3,5);const slots=decision.mode==='stay'?total-1:total;const recent=new Set(game.lastOffers||[]);
+ const low=Math.max(68,game.overall-(decision.mode==='stay'?14:18));const high=Math.min(95,game.overall+(decision.mode==='stay'?10:6)+game.reputation*.05);let pool=CLUBS.filter(c=>c.name!==current?.name&&c.power>=low&&c.power<=high);
+ if(pool.length<slots*3)pool=CLUBS.filter(c=>c.name!==current?.name&&c.power<=high+6&&c.power>=low-6);
+ pool=pool.map(c=>({club:c,score:Math.random()*72-Math.abs(c.power-(game.overall+(decision.mode==='stay'?1:-2)))*1.05-(recent.has(c.name)?15:0)+(c.league!==current?.league?rand(0,9):0)})).sort((a,b)=>b.score-a.score).map(x=>x.club).slice(0,slots);
+ const offers=[];if(decision.mode==='stay')offers.push(makeOffer(current,'留队',true));const moveType=decision.mode==='first'?'首份合同':decision.mode==='loan'?'租借':decision.mode==='release'?'自由签约':'转会';offers.push(...pool.map(club=>makeOffer(club,moveType,false)));game.lastOffers=offers.map(o=>o.club.name);$('#club-decision').textContent=decision.message;return offers
 }
+function clubWindowDecision(current){
+ if(!current)return{mode:'first',message:'等待第一份职业合同'};const gap=current.power-game.overall;const lastRating=parseFloat(game.history[0]?.rating||'7');let exitRisk=0;if(gap>=8)exitRisk+=.5;else if(gap>=5)exitRisk+=.25;if(lastRating<6.5)exitRisk+=.28;else if(lastRating<6.8)exitRisk+=.12;if(game.age>=32)exitRisk+=(game.age-31)*.09;if(game.age>=35)exitRisk+=.22;
+ if(Math.random()>=Math.min(.94,exitRisk))return{mode:'stay',message:'俱乐部愿意提供留队合同'};if(game.age<=29&&gap>=4&&Math.random()<.62)return{mode:'loan',message:'母队要求外租，本窗没有留队选项'};if(game.age>=34)return{mode:'release',message:'合同到期，俱乐部不再续约'};return{mode:'sale',message:'俱乐部决定挂牌出售，本窗没有留队选项'}
+}
+function makeOffer(club,moveType,stay){const gap=game.overall-club.power;const role=gap>=3?'绝对核心':gap>=-2?'主力':gap>=-7?'轮换':'替补';const wage=Math.max(8,Math.round((club.power-62)*7+(game.overall-60)*5+rand(-15,25)));return{club,role,wage,stay,moveType,fit:fitScore(club),promise:role==='绝对核心'?'围绕你建队':role==='主力'?'稳定首发':role==='轮换'?'竞争主力':'杯赛机会'}}
 function fitScore(club){const good=(club.style==='youth'&&game.age<=22)||(club.style==='attack'&&game.position!=='后卫')||(club.style==='physical'&&['后卫','前锋'].includes(game.position))||(club.style==='star'&&game.reputation>38);return good?1.08:.96}
-function offerHTML(o,i){return `<button class="offer" data-offer="${i}"><div class="offer-top"><span class="crest" style="--club:${o.club.color}">${o.club.abbr}</span><div><b>${o.stay?'留队 · ':''}${o.club.name}</b><small>${o.club.league} · ${o.promise}</small></div></div><div class="offer-meta"><span>球队实力<b>${o.club.power}</b></span><span>承诺角色<b>${o.role}</b></span><span>周薪<b>€${o.wage}K</b></span></div></button>`}
+function offerHTML(o,i){return `<button class="offer" data-offer="${i}"><div class="offer-top"><span class="crest" data-crest="${i}" style="--club:${o.club.color}"><span>${o.club.abbr}</span></span><div><b>${o.club.name}<em class="move-type">${o.moveType}</em></b><small>${o.club.league} · ${o.promise}</small></div></div><div class="offer-meta"><span>球队实力<b>${o.club.power}</b></span><span>承诺角色<b>${o.role}</b></span><span>周薪<b>€${o.wage}K</b></span></div></button>`}
+async function hydrateOfferBadges(){
+ const slots=[...document.querySelectorAll('[data-crest]')];slots.forEach(slot=>{const club=offerList[+slot.dataset.crest]?.club;if(!club)return;const img=new Image();img.alt=`${club.name}队徽`;img.onload=()=>slot.replaceChildren(img);img.src=club.crest})
+}
 
 function simulateSeason(){
- const offer=chosenOffer,club=offer.club,roleBase={绝对核心:42,主力:36,轮换:25,替补:14}[offer.role];let apps=roleBase+rint(-3,3);const injury=rollInjury();let growth=rollGrowth();const beforeOverall=game.overall;
+ const offer=chosenOffer,club=offer.club,previousClub=game.club,roleBase={绝对核心:42,主力:36,轮换:25,替补:14}[offer.role];let apps=roleBase+rint(-3,3);const injury=rollInjury();let growth=rollGrowth();const beforeOverall=game.overall;
  if(chosenStrategy.id==='minutes'){apps+=4;growth+=.5}if(chosenStrategy.id==='numbers')growth+=.4;if(chosenStrategy.id==='trophies'){apps-=2;growth+=offer.fit>.99?.5:0}if(injury){apps-=injury.missed;growth-=injury.growthPenalty}
  apps=clamp(apps,4,48);const planBoost=chosenPlan.bonus*offer.fit;applyDevelopment(chosenPlan.attr,planBoost,growth);game.overall=calcOverall(game.attrs,game.position);const overallChange=game.overall-beforeOverall;
  const quality=clamp((game.overall+club.power)/2+offer.fit*5+rand(-6,6),45,99);const pos=POS_STATS[game.position];let goals=Math.max(0,Math.round(apps*pos.goal*(quality/80)*rand(.72,1.25)));let assists=Math.max(0,Math.round(apps*pos.assist*(quality/80)*rand(.72,1.25)));
  if(chosenStrategy.id==='numbers'){goals=Math.round(goals*1.22);assists=Math.round(assists*1.17)}if(game.position==='后卫'&&quality>84)assists+=rint(1,4);
  const teamHonors=rollTeamHonors(club,quality,chosenStrategy.id==='trophies');const personal=rollPersonalHonors(goals,assists,apps,teamHonors,club);const national=rollNationalSeason();const nationalHonors=national.honors;
  const rating=clamp(5.9+(goals+assists)/Math.max(15,apps)*2.25+(quality-75)/38+rand(-.18,.18),5.5,9.3);const valueFactor=Math.max(.55,1-(Math.max(0,game.age-29)*.07));game.value=Math.max(1,(game.overall-60)**1.78*.15*valueFactor+game.reputation*.32);
- game.reputation=clamp(game.reputation+(rating-6.2)*5+teamHonors.length*3+personal.length*7+nationalHonors.length*5,0,100);game.totalApps+=apps;game.totalGoals+=goals;game.totalAssists+=assists;game.trophyCount+=teamHonors.length+nationalHonors.length;game.honors.push(...personal);game.club=club;
- const record={season:yearLabel(),age:game.age,club:{...club},role:offer.role,overall:game.overall,overallChange,apps,goals,assists,rating:rating.toFixed(1),teamHonors,personal,national,nationalHonors,injury:injury?.label||'',plan:chosenPlan.name,strategy:chosenStrategy.name};game.history.unshift(record);showReport(record);save();
+ game.reputation=clamp(game.reputation+(rating-6.2)*5+teamHonors.length*3+personal.length*7+nationalHonors.length*5,0,100);game.totalApps+=apps;game.totalGoals+=goals;game.totalAssists+=assists;game.trophyCount+=teamHonors.length+nationalHonors.length;game.honors.push(...personal);if(offer.moveType==='租借'&&previousClub)game.parentClub={...previousClub};else if(offer.moveType!=='留队')game.parentClub=null;game.club=club;
+ const record={season:yearLabel(),age:game.age,club:{...club},moveType:offer.moveType,role:offer.role,overall:game.overall,overallChange,apps,goals,assists,rating:rating.toFixed(1),teamHonors,personal,national,nationalHonors,injury:injury?.label||'',plan:chosenPlan.name,strategy:chosenStrategy.name};game.history.unshift(record);showReport(record);save();
 }
 function applyDevelopment(focus,bonus,growth){
  const keyAttrs=new Set(POS_STATS[game.position].keys);Object.keys(game.attrs).forEach(k=>{let add=keyAttrs.has(k)?growth+rand(-.8,.8):growth*.28+rand(-.35,.35);if(focus==='tech'&&['tech','shoot'].includes(k))add+=bonus*.45;if(focus==='physical'&&['pace','physical'].includes(k))add+=bonus*.45;if(focus==='mind'&&['vision','composure','defense'].includes(k))add+=bonus*.4;game.attrs[k]=Math.round(clamp(game.attrs[k]+add,35,game.potential))})
@@ -115,7 +116,7 @@ function rollGrowth(){
  const r=Math.random();if(game.age<=20)return r<.16?0:r<.46?rint(1,2):r<.78?rint(3,4):r<.94?rint(5,6):rint(7,9);if(game.age<=24)return r<.24?0:r<.61?rint(1,2):r<.87?rint(3,4):r<.97?rint(5,6):rint(7,8);if(game.age<=28)return r<.36?0:r<.79?rint(1,2):r<.95?rint(3,4):rint(5,6);if(game.age<=31)return r<.25?-1:r<.72?0:r<.94?1:2;if(game.age<=34)return r<.46?-1:r<.72?-2:r<.94?0:1;return r<.5?-2:r<.82?-1:r<.95?-3:0
 }
 function rollInjury(){
- let risk=.1+(chosenPlan.id==='body'?.06:0)+(chosenStrategy.id==='numbers'?.1:0)+(game.age>=31?.06:0);if(Math.random()>=risk)return null;const r=Math.random();if(r<.58)return{label:'轻微肌肉伤，缺阵数周',missed:rint(2,5),growthPenalty:0};if(r<.9)return{label:'脚踝或肌肉伤，缺阵两个月',missed:rint(7,12),growthPenalty:1};return{label:'重伤，赛季大部分时间报销',missed:rint(17,27),growthPenalty:rint(2,4)}
+ let risk=.06+(chosenPlan.id==='body'?.025:0)+(chosenStrategy.id==='numbers'?.035:0)+(game.age>=31?.04:0);if(Math.random()>=risk)return null;const r=Math.random();if(r<.62)return{label:'轻微肌肉伤，缺阵数周',missed:rint(2,5),growthPenalty:0};if(r<.92)return{label:'脚踝或肌肉伤，缺阵两个月',missed:rint(7,12),growthPenalty:1};return{label:'重伤，赛季大部分时间报销',missed:rint(17,27),growthPenalty:rint(2,4)}
 }
 function rollTeamHonors(club,quality,trophyPush){
  const h=[];const boost=trophyPush?7:0;if(Math.random()*100<club.power-69+boost)h.push(`${club.league}冠军`);if(Math.random()*100<club.power-63+boost*.7)h.push(CUP_BY_LEAGUE[club.league]||'杯赛冠军');if(club.power>=82&&Math.random()*100<(club.power-77)*2.3+(quality-80)+boost)h.push('欧冠冠军');return h
@@ -137,17 +138,17 @@ function showReport(r){
  const honors=[...r.teamHonors,...r.personal,...r.nationalHonors];$('#report-honors').innerHTML=honors.length?honors.map(x=>`<span class="honor">${x}</span>`).join(''):'<span class="honor">本季无冠</span>';$('#report').hidden=false;
 }
 function nextSeason(){
- $('#report').hidden=true;game.age++;game.year++;game.season++;if(game.age>=38){retire();return}renderGame()
+ $('#report').hidden=true;game.age++;game.year++;game.season++;if(game.parentClub){game.club={...game.parentClub};game.parentClub=null}if(game.age>=38){retire();return}renderGame()
 }
 function retire(){game.retired=true;const allHonors=game.history.flatMap(r=>[...(r.teamHonors||[]),...(r.personal||[]),...(r.nationalHonors||[])]);$('#report').hidden=false;$('#report-year').textContent=`${game.year}`;$('#report-kicker').textContent='CAREER COMPLETE';$('#report-title').textContent='终场哨响。';$('#report-summary').textContent=`俱乐部${game.totalApps}场${game.totalGoals}球${game.totalAssists}助，国家队${game.totalNationalApps}场${game.totalNationalGoals}球，共获得${game.trophyCount}座冠军。`;$('#report-stats').innerHTML=`<div><span>最终能力</span><b>${game.overall}</b></div><div><span>出场</span><b>${game.totalApps}</b></div><div><span>国家队</span><b>${game.totalNationalApps}</b></div><div><span>冠军</span><b>${game.trophyCount}</b></div>`;$('#report-honors').innerHTML=[...new Set(allHonors)].map(x=>`<span class="honor">${x}</span>`).join('')||'<span class="honor">职业球员</span>';$('#next-season').textContent='查看完整履历';$('#next-season').onclick=()=>{$('#report').hidden=true};save()}
 function renderTimeline(){
- $('#timeline').innerHTML=game.history.length?game.history.map(r=>`<article class="year-row"><span>${r.season}</span><div class="year-club"><b>${r.club.name}</b><small>${r.role} · ${r.plan}${r.injury?` · ${r.injury}`:''}</small></div><div class="year-result"><b>${r.apps} 场 ${r.goals} 球 ${r.assists} 助</b><small>${[...r.teamHonors,...r.personal,...(r.nationalHonors||[])].join(' · ')||(r.national?.competition?`${r.national.competition} · 无冠赛季`:'无冠赛季')}</small></div><strong class="year-ovr">${r.overall}<small>${(r.overallChange||0)>=0?'+':''}${r.overallChange||0}</small></strong></article>`).join(''):'<p class="empty">第一份职业合同还没有签字。</p>'
+ $('#timeline').innerHTML=game.history.length?game.history.map(r=>`<article class="year-row"><span>${r.season}</span><div class="year-club"><b>${r.club.name}</b><small>${r.moveType?`${r.moveType} · `:''}${r.role} · ${r.plan}${r.injury?` · ${r.injury}`:''}</small></div><div class="year-result"><b>${r.apps} 场 ${r.goals} 球 ${r.assists} 助</b><small>${[...r.teamHonors,...r.personal,...(r.nationalHonors||[])].join(' · ')||(r.national?.competition?`${r.national.competition} · 无冠赛季`:'无冠赛季')}</small></div><strong class="year-ovr">${r.overall}<small>${(r.overallChange||0)>=0?'+':''}${r.overallChange||0}</small></strong></article>`).join(''):'<p class="empty">第一份职业合同还没有签字。</p>'
 }
 function renderHonorCabinet(){
  const honors=game.history.flatMap(r=>[...(r.teamHonors||[]),...(r.personal||[]),...(r.nationalHonors||[])]);const counts=honors.reduce((all,h)=>{all[h]=(all[h]||0)+1;return all},{});$('#total-honor-count').textContent=honors.length;$('#honor-count').textContent=`${honors.length} 项荣誉`;$('#career-honors').innerHTML=honors.length?Object.entries(counts).map(([name,count])=>`<span class="career-honor">${name}${count>1?` ×${count}`:''}</span>`).join(''):'<small>荣誉室还是空的</small>'
 }
 
 $('#setup-form').onsubmit=e=>{e.preventDefault();const name=$('#player-name').value.trim()||'小将';const position=document.querySelector('input[name="position"]:checked').value;game=newGame(name,position,$('#nationality').value);renderGame()};
-$('#simulate').onclick=simulateSeason;$('#next-season').onclick=nextSeason;$('#reset').onclick=()=>{if(confirm('确定删除当前生涯并重新开档？')){localStorage.removeItem(SAVE_KEY);location.reload()}};
+$('#simulate').onclick=simulateSeason;$('#next-season').onclick=nextSeason;$('#retire-early').onclick=()=>{if(confirm('确定现在退役，并生成完整生涯报告？'))retire()};$('#reset').onclick=()=>{if(confirm('确定删除当前生涯并重新开档？')){localStorage.removeItem(SAVE_KEY);location.reload()}};
 $('#lock-nationality').onclick=()=>{game.nationality=$('#passport-nationality').value;game.needsNationality=false;renderGame()};
 const existing=load();if(existing){$('#continue').hidden=false;$('#continue').onclick=()=>{game=existing;renderGame()}}
