@@ -44,6 +44,15 @@ const ICONS={
 const CUP_BY_LEAGUE={英超:'足总杯',西甲:'国王杯',意甲:'意大利杯',德甲:'德国杯',法甲:'法国杯',葡超:'葡萄牙杯',荷甲:'荷兰杯',阿甲:'阿根廷杯',巴甲:'巴西杯',美职联:'美国公开杯',沙特联:'沙王冠',苏超:'苏格兰杯',土超:'土耳其杯',中超:'足协杯',俄超:'俄罗斯杯',比甲:'比利时杯',乌甲:'乌拉圭杯'};
 const LEAGUE_SYSTEMS={英超:'英冠',西甲:'西乙',意甲:'意乙',德甲:'德乙',法甲:'法乙'};
 const TOP_BY_SECOND=Object.fromEntries(Object.entries(LEAGUE_SYSTEMS).map(([top,second])=>[second,top]));
+const CONTINENTAL_BY_LEAGUE={英超:'欧冠',西甲:'欧冠',意甲:'欧冠',德甲:'欧冠',法甲:'欧冠',葡超:'欧冠',荷甲:'欧冠',苏超:'欧冠',土超:'欧冠',俄超:'欧冠',比甲:'欧冠',阿甲:'解放者杯',巴甲:'解放者杯',乌甲:'解放者杯',中超:'亚冠',沙特联:'亚冠',美职联:'中北美冠军杯'};
+const TITLE_BASE={
+ 曼城:31,利物浦:24,阿森纳:20,切尔西:8,曼联:6,纽卡斯尔联:4,热刺:7,阿斯顿维拉:2,
+ 皇家马德里:40,巴塞罗那:38,马德里竞技:8,毕尔巴鄂竞技:2,比利亚雷亚尔:1,皇家贝蒂斯:.7,皇家社会:.7,
+ 国际米兰:30,那不勒斯:22,尤文图斯:20,AC米兰:14,亚特兰大:8,罗马:3,拉齐奥:1.5,佛罗伦萨:1,博洛尼亚:1,
+ 拜仁:56,勒沃库森:22,多特蒙德:12,莱比锡:7,法兰克福:1.5,斯图加特:1,
+ 巴黎圣日耳曼:65,摩纳哥:10,马赛:8,里尔:5,里昂:3,雷恩:1,尼斯:1
+};
+const BIG_FIVE=new Set(Object.keys(LEAGUE_SYSTEMS));
 const NATIONS={
  中国:{strength:63,confed:'AS'},阿根廷:{strength:91,confed:'SA'},巴西:{strength:91,confed:'SA'},乌拉圭:{strength:84,confed:'SA'},法国:{strength:92,confed:'EU'},德国:{strength:88,confed:'EU'},英格兰:{strength:90,confed:'EU'},苏格兰:{strength:78,confed:'EU'},西班牙:{strength:91,confed:'EU'},葡萄牙:{strength:89,confed:'EU'},意大利:{strength:86,confed:'EU'},比利时:{strength:85,confed:'EU'},荷兰:{strength:87,confed:'EU'},土耳其:{strength:79,confed:'EU'},俄罗斯:{strength:78,confed:'EU'},沙特阿拉伯:{strength:72,confed:'AS'},美国:{strength:80,confed:'NA'},克罗地亚:{strength:83,confed:'EU'},挪威:{strength:81,confed:'EU'},日本:{strength:80,confed:'AS'},韩国:{strength:79,confed:'AS'},墨西哥:{strength:80,confed:'NA'},摩洛哥:{strength:82,confed:'AF'},瑞士:{strength:81,confed:'EU'},哥伦比亚:{strength:84,confed:'SA'},丹麦:{strength:80,confed:'EU'},塞内加尔:{strength:81,confed:'AF'},尼日利亚:{strength:79,confed:'AF'}
 };
@@ -129,7 +138,7 @@ async function hydrateOfferBadges(){
 function simulateSeason(){
  const offer=chosenOffer,club=offer.club,previousClub=game.club,roleBase={绝对核心:42,主力:36,轮换:25,替补:14}[offer.role];let apps=roleBase+rint(-3,3);const injury=rollInjury();let growth=rollGrowth();const beforeOverall=game.overall;
  if(chosenStrategy.id==='minutes'){apps+=4;growth+=.5}if(chosenStrategy.id==='numbers')growth+=.4;if(chosenStrategy.id==='trophies'){apps-=2;growth+=offer.fit>.99?.5:0}if(injury){apps-=injury.missed;growth-=injury.growthPenalty}
- apps=clamp(apps,4,48);const planBoost=chosenPlan.bonus*offer.fit;applyDevelopment(chosenPlan.attr,planBoost,growth);game.overall=calcOverall(game.attrs,game.position);const overallChange=game.overall-beforeOverall;
+ apps=clamp(apps,4,48);const planBoost=chosenPlan.bonus*offer.fit;applyDevelopment(chosenPlan.attr,planBoost,growth);if(injury)applyInjuryImpact(injury);game.overall=calcOverall(game.attrs,game.position);const overallChange=game.overall-beforeOverall;
  const quality=clamp((game.overall+club.power)/2+offer.fit*5+rand(-6,6),45,99);const pos=POS_STATS[game.position];let goals=Math.max(0,Math.round(apps*pos.goal*(quality/80)*rand(.72,1.25)));let assists=Math.max(0,Math.round(apps*pos.assist*(quality/80)*rand(.72,1.25)));
  if(chosenStrategy.id==='numbers'){goals=Math.round(goals*1.22);assists=Math.round(assists*1.17)}if(POS_STATS[game.position].group==='defense'&&quality>84)assists+=rint(1,4);
  const teamHonors=rollTeamHonors(club,quality,chosenStrategy.id==='trophies');const personal=rollPersonalHonors(goals,assists,apps,teamHonors,club);const national=rollNationalSeason();const nationalHonors=national.honors;
@@ -145,18 +154,35 @@ function rollGrowth(){
  const r=Math.random();if(game.age<=20)return r<.16?0:r<.46?rint(1,2):r<.78?rint(3,4):r<.94?rint(5,6):rint(7,9);if(game.age<=24)return r<.24?0:r<.61?rint(1,2):r<.87?rint(3,4):r<.97?rint(5,6):rint(7,8);if(game.age<=28)return r<.36?0:r<.79?rint(1,2):r<.95?rint(3,4):rint(5,6);if(game.age<=31)return r<.25?-1:r<.72?0:r<.94?1:2;if(game.age<=34)return r<.46?-1:r<.72?-2:r<.94?0:1;return r<.5?-2:r<.82?-1:r<.95?-3:0
 }
 function rollInjury(){
- let risk=.06+(chosenPlan.id==='body'?.025:0)+(chosenStrategy.id==='numbers'?.035:0)+(game.age>=31?.04:0);if(Math.random()>=risk)return null;const r=Math.random();if(r<.62)return{label:'轻微肌肉伤，缺阵数周',missed:rint(2,5),growthPenalty:0};if(r<.92)return{label:'脚踝或肌肉伤，缺阵两个月',missed:rint(7,12),growthPenalty:1};return{label:'重伤，赛季大部分时间报销',missed:rint(17,27),growthPenalty:rint(2,4)}
+ game.injuryHistory=game.injuryHistory||{};const prior=Object.values(game.injuryHistory).reduce((sum,n)=>sum+n,0);let risk=.22+(chosenPlan.id==='body'?.035:0)+(chosenStrategy.id==='numbers'?.055:0)+(game.age>=30?(game.age-29)*.012:0)+Math.min(.07,prior*.008);if(Math.random()>=clamp(risk,.12,.48))return null;
+ const injuries=[
+  {id:'knock',weight:29,label:'碰撞挫伤',missed:[1,2],growth:0},
+  {id:'hamstring',weight:22,label:'腿后肌拉伤',missed:[2,7],growth:1,attrs:{pace:[0,1]},potential:[0,1]},
+  {id:'ankle',weight:15,label:'踝关节扭伤',missed:[2,6],growth:1,attrs:{pace:[0,1],physical:[0,1]}},
+  {id:'groin',weight:11,label:'腹股沟内收肌伤',missed:[2,6],growth:1,attrs:{physical:[0,1]}},
+  {id:'calf',weight:9,label:'小腿肌肉拉伤',missed:[3,8],growth:1,attrs:{pace:[0,1],physical:[0,1]},potential:[0,1]},
+  {id:'mcl',weight:7,label:'膝内侧副韧带损伤',missed:[4,10],growth:2,attrs:{physical:[0,2]},potential:[0,1]},
+  {id:'meniscus',weight:5,label:'半月板损伤',missed:[6,14],growth:2,attrs:{pace:[0,2],physical:[0,2]},potential:[0,3]},
+  {id:'fracture',weight:.8,label:'足部或腿部骨折',missed:[10,20],growth:3,attrs:{pace:[0,2],physical:[1,3]},potential:[1,4]},
+  {id:'acl',weight:.7,label:'前十字韧带撕裂',missed:[25,36],growth:4,attrs:{pace:[1,4],physical:[1,3]},potential:[2,6]},
+  {id:'achilles',weight:.5,label:'跟腱断裂',missed:[18,28],growth:4,attrs:{pace:[2,5],physical:[1,4]},potential:[2,7]}
+ ];
+ const weighted=injuries.map(x=>({...x,weight:x.weight*(game.injuryHistory[x.id]?1+Math.min(1.2,game.injuryHistory[x.id]*.35):1)}));let roll=Math.random()*weighted.reduce((sum,x)=>sum+x.weight,0);const injury=weighted.find(x=>(roll-=x.weight)<=0)||weighted[0];game.injuryHistory[injury.id]=(game.injuryHistory[injury.id]||0)+1;return{...injury,missed:rint(...injury.missed),growthPenalty:injury.growth,recurrent:game.injuryHistory[injury.id]>1}
+}
+function applyInjuryImpact(injury){
+ const losses=[];Object.entries(injury.attrs||{}).forEach(([attr,range])=>{const loss=rint(...range);if(loss){game.attrs[attr]=Math.max(35,game.attrs[attr]-loss);losses.push(`${{pace:'速度',physical:'身体'}[attr]||attr} -${loss}`)}});const potentialLoss=injury.potential?rint(...injury.potential):0;if(potentialLoss){game.potential=Math.max(game.overall,potentialLoss?game.potential-potentialLoss:game.potential);losses.push(`成长上限受损`)}injury.effect=losses.join('、');injury.label=`${injury.recurrent?'复发性':''}${injury.label}，缺阵约 ${injury.missed} 场${injury.effect?`；${injury.effect}`:''}`
 }
 function rollTeamHonors(club,quality,trophyPush){
- const h=[];const boost=trophyPush?7:0;if(Math.random()*100<club.power-69+boost)h.push(`${club.league}冠军`);if(Math.random()*100<club.power-63+boost*.7)h.push(CUP_BY_LEAGUE[club.league]||'杯赛冠军');if(club.power>=82&&Math.random()*100<(club.power-77)*2.3+(quality-80)+boost)h.push('欧冠冠军');return h
+ const h=[];const boost=trophyPush?4:0;const leagueChance=leagueTitleChance(club,quality,trophyPush);if(Math.random()*100<leagueChance)h.push(`${club.league}冠军`);const cupChance=clamp(2+Math.max(0,club.power-72)*.85+(quality-78)*.18+boost*.65,1,27);if(Math.random()*100<cupChance)h.push(CUP_BY_LEAGUE[club.league]||'杯赛冠军');const continental=CONTINENTAL_BY_LEAGUE[club.league];const continentalChance=clamp(Math.max(0,club.power-80)*1.35+(quality-82)*.3+boost*.7,0,23);if(continental&&Math.random()*100<continentalChance)h.push(`${continental}冠军`);return h
 }
+function leagueTitleChance(club,quality,trophyPush){if(BIG_FIVE.has(club.league)){const base=TITLE_BASE[club.name]??.1;const modifier=clamp(.86+(quality-club.power)*.022+(trophyPush?.12:0),.65,1.3);const carry=game.overall>=91?clamp((game.overall-90)**2*.32,0,12):0;return clamp(base*modifier+carry,.05,68)}return clamp(.25+Math.max(0,club.power-73)**2*.1+(quality-78)*.3+(trophyPush?3:0)+(game.overall>=91?Math.min(10,(game.overall-90)**2*.25):0),.1,52)}
 function rollLeagueMovement(club,quality,honors){
  const second=LEAGUE_SYSTEMS[club.league];if(second){const risk=clamp((77-club.power)*4+(72-quality)*2,0,42);if(Math.random()*100<risk)return{type:'relegated',from:club.league,to:second,label:`降入${second}`}}
  const top=TOP_BY_SECOND[club.league];if(top){const champion=honors.includes(`${club.league}冠军`);const chance=champion?100:clamp(24+(club.power-72)*4+(quality-72)*2,12,78);if(Math.random()*100<chance)return{type:'promoted',from:club.league,to:top,label:`升入${top}`}}
  return null
 }
 function rollPersonalHonors(goals,assists,apps,teamHonors,club){
- const h=[];const ga=goals+assists;const group=POS_STATS[game.position].group;if(game.age<=21&&game.overall>=78&&ga>=18)h.push('金童奖');if(['attack','wing'].includes(group)&&goals>=Math.max(22,apps*.58))h.push(`${club.league}金靴`);if(['midfield','wing'].includes(group)&&assists>=15)h.push(`${club.league}助攻王`);if(game.overall>=87&&ga>=25)h.push(`${club.league}赛季最佳球员`);if(game.overall>=91&&ga>=32&&teamHonors.includes('欧冠冠军'))h.push('金球奖');return h
+ const h=[];const ga=goals+assists;const group=POS_STATS[game.position].group;if(game.age<=21&&game.overall>=78&&ga>=18)h.push('金童奖');if(['attack','wing'].includes(group)&&goals>=Math.max(22,apps*.58))h.push(`${club.league}金靴`);if(['midfield','wing'].includes(group)&&assists>=15)h.push(`${club.league}助攻王`);if(game.overall>=87&&ga>=25)h.push(`${club.league}赛季最佳球员`);if(game.overall>=88&&ga>=25){const clasicoBonus=['皇家马德里','巴塞罗那'].includes(club.name)?16:0;const eliteBonus=['曼城','利物浦','拜仁','巴黎圣日耳曼'].includes(club.name)?5:0;const majorTitle=teamHonors.some(x=>['欧冠冠军','世界杯冠军'].includes(x));const chance=clamp(3+(game.overall-88)*6.5+(ga-25)*.65+(majorTitle?15:0)+clasicoBonus+eliteBonus,2,78);if(Math.random()*100<chance)h.push('金球奖')}return h
 }
 function nationalCompetition(nation,year){
  if(game.finalissimaYear===year&&['EU','SA'].includes(nation.confed))return'欧美杯';if(year%4===2)return'世界杯';if(nation.confed==='EU'&&year%4===0)return'欧洲杯';if(nation.confed==='SA'&&year%4===0)return'美洲杯';if(nation.confed==='AS'&&(year-2027)%4===0)return'亚洲杯';if(nation.confed==='AF'&&year%2===1)return'非洲杯';if(nation.confed==='EU'&&year%2===1)return'欧国联';return''
