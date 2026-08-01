@@ -24,8 +24,10 @@
       <form class="paper setup-form" id="setup-form">
         <div class="paper-head"><span>青训球员档案</span><b>SEASON 01</b></div>
         <div class="identity-grid">
-          <label class="text-label">球员姓名<input id="player-name" value="小将" maxlength="12" autocomplete="off" /></label>
+          <label class="text-label">姓<input id="player-family-name" value="小将" maxlength="12" autocomplete="family-name" /></label>
+          <label class="text-label">名（可不填）<input id="player-given-name" maxlength="12" autocomplete="given-name" /></label>
           <label class="text-label">初始年龄<select id="start-age"><option>16</option><option>17</option><option>18</option><option>19</option></select></label>
+          <label class="text-label">球衣号码<input id="shirt-number" type="number" min="1" max="99" placeholder="自动" inputmode="numeric" /></label>
         </div>
         <label class="text-label nationality-label">国籍
           <select id="nationality">
@@ -33,24 +35,26 @@
           </select>
         </label>
         <fieldset>
-          <legend>位置</legend>
-          <div class="radio-grid">
-            <label><input type="radio" name="position" value="ST" checked><span>ST<small>中锋 · 终结 / 跑位</small></span></label>
-            <label><input type="radio" name="position" value="LW"><span>LW<small>左边锋 · 速度 / 内切</small></span></label>
-            <label><input type="radio" name="position" value="RW"><span>RW<small>右边锋 · 突破 / 传中</small></span></label>
-            <label><input type="radio" name="position" value="CF"><span>CF<small>影锋 · 串联 / 得分</small></span></label>
-            <label><input type="radio" name="position" value="CAM"><span>CAM<small>前腰 · 创造 / 远射</small></span></label>
-            <label><input type="radio" name="position" value="LM"><span>LM<small>左前卫 · 推进 / 支援</small></span></label>
-            <label><input type="radio" name="position" value="CM"><span>CM<small>中前卫 · 组织 / 覆盖</small></span></label>
-            <label><input type="radio" name="position" value="RM"><span>RM<small>右前卫 · 传中 / 跑动</small></span></label>
-            <label><input type="radio" name="position" value="CDM"><span>CDM<small>后腰 · 拦截 / 出球</small></span></label>
-            <label><input type="radio" name="position" value="LWB"><span>LWB<small>左翼卫 · 往返 / 传中</small></span></label>
-            <label><input type="radio" name="position" value="LB"><span>LB<small>左后卫 · 防守 / 套边</small></span></label>
-            <label><input type="radio" name="position" value="CB"><span>CB<small>中后卫 · 预判 / 对抗</small></span></label>
-            <label><input type="radio" name="position" value="RB"><span>RB<small>右后卫 · 防守 / 套边</small></span></label>
-            <label><input type="radio" name="position" value="RWB"><span>RWB<small>右翼卫 · 往返 / 传中</small></span></label>
-            <label><input type="radio" name="position" value="GK"><span>GK<small>门将 · 扑救 / 稳定</small></span></label>
+          <legend>在球场上选择位置</legend>
+          <div class="position-pitch" role="radiogroup" aria-label="球员位置">
+            <i class="pitch-line halfway" aria-hidden="true"></i><i class="pitch-line center-circle" aria-hidden="true"></i><i class="pitch-line box-top" aria-hidden="true"></i><i class="pitch-line box-bottom" aria-hidden="true"></i>
+            <label class="pitch-position pos-st"><input type="radio" name="position" value="ST" checked><span>ST<small>中锋</small></span></label>
+            <label class="pitch-position pos-lw"><input type="radio" name="position" value="LW"><span>LW<small>左边锋</small></span></label>
+            <label class="pitch-position pos-rw"><input type="radio" name="position" value="RW"><span>RW<small>右边锋</small></span></label>
+            <label class="pitch-position pos-cf"><input type="radio" name="position" value="CF"><span>CF<small>影锋</small></span></label>
+            <label class="pitch-position pos-cam"><input type="radio" name="position" value="CAM"><span>CAM<small>前腰</small></span></label>
+            <label class="pitch-position pos-lm"><input type="radio" name="position" value="LM"><span>LM<small>左前卫</small></span></label>
+            <label class="pitch-position pos-cm"><input type="radio" name="position" value="CM"><span>CM<small>中前卫</small></span></label>
+            <label class="pitch-position pos-rm"><input type="radio" name="position" value="RM"><span>RM<small>右前卫</small></span></label>
+            <label class="pitch-position pos-cdm"><input type="radio" name="position" value="CDM"><span>CDM<small>后腰</small></span></label>
+            <label class="pitch-position pos-lwb"><input type="radio" name="position" value="LWB"><span>LWB<small>左翼卫</small></span></label>
+            <label class="pitch-position pos-lb"><input type="radio" name="position" value="LB"><span>LB<small>左后卫</small></span></label>
+            <label class="pitch-position pos-cb"><input type="radio" name="position" value="CB"><span>CB<small>中后卫</small></span></label>
+            <label class="pitch-position pos-rb"><input type="radio" name="position" value="RB"><span>RB<small>右后卫</small></span></label>
+            <label class="pitch-position pos-rwb"><input type="radio" name="position" value="RWB"><span>RWB<small>右翼卫</small></span></label>
+            <label class="pitch-position pos-gk"><input type="radio" name="position" value="GK"><span>GK<small>门将</small></span></label>
           </div>
+          <p class="pitch-help">进攻方向 ↑ · 点击场上圆点确定主位置</p>
         </fieldset>
         <button class="primary" type="submit">开始生涯 <span>→</span></button>
         <button class="continue" id="continue" type="button" hidden>继续上次生涯</button>
@@ -88,17 +92,17 @@
 
         <div class="decision-board">
           <section class="control-block">
-            <div class="section-title"><span>本季发展方向</span><small>只选一项</small></div>
+            <div class="section-title"><span>本季发展方向</span></div>
             <div class="plan-grid" id="plans"></div>
           </section>
 
           <section class="control-block">
-            <div class="section-title"><span>你要怎样踢这一年</span><small>收益与风险联动</small></div>
+            <div class="section-title"><span>你要怎样踢这一年</span></div>
             <div class="plan-grid strategy-grid" id="strategies"></div>
           </section>
 
           <section class="offers-block">
-            <div class="section-title"><span>合同与转会</span><small id="club-decision">角色承诺比队名更重要</small></div>
+            <div class="section-title"><span>合同与转会</span></div>
             <div class="offers" id="offers"></div>
           </section>
 
@@ -123,10 +127,12 @@
       <h2 id="report-title"></h2>
       <p id="report-summary"></p>
       <div class="report-stats" id="report-stats"></div>
+      <div class="season-outcomes" id="report-outcomes"></div>
       <div class="honors" id="report-honors"></div>
       <button class="primary" id="next-season">进入下个转会窗 <span>→</span></button>
     </article>
   </div>
+  <script src="career-content-data.js"></script>
   <script src="career.js"></script>
 </body>
 </html>

@@ -1,0 +1,34 @@
+window.CAREER_CONTENT_DATA={
+  leagueAwards:{
+    英超:{scorer:'英超金靴',creator:'英超助攻王',keeper:'英超金手套',player:'英超赛季最佳球员',young:'英超赛季最佳年轻球员'},
+    西甲:{scorer:'皮奇奇奖',creator:'西甲助攻王',keeper:'萨莫拉奖',player:'西甲赛季最佳球员',young:'西甲最佳U23球员',localScorer:'萨拉奖'},
+    意甲:{scorer:'意甲最佳射手',creator:'意甲助攻王',keeper:'意甲最佳门将',defender:'意甲最佳后卫',midfielder:'意甲最佳中场',forward:'意甲最佳前锋',player:'意甲MVP',young:'意甲最佳U23球员'},
+    德甲:{scorer:'德甲最佳射手',creator:'德甲助攻王',keeper:'德甲赛季最佳门将',player:'德国足球先生',young:'德甲最佳新人'},
+    德乙:{scorer:'德乙最佳射手',creator:'德乙助攻王',keeper:'德乙赛季最佳门将',player:'德乙赛季最佳球员',young:'德乙最佳新人'},
+    法甲:{scorer:'法甲最佳射手',creator:'法甲助攻王',keeper:'UNFP法甲最佳门将',player:'UNFP法甲最佳球员',young:'UNFP法甲最佳年轻球员'},
+    葡超:{scorer:'葡超最佳射手',creator:'葡超助攻王',keeper:'葡超最佳门将',player:'葡超赛季最佳球员',young:'葡超最佳年轻球员'},
+    荷甲:{scorer:'荷甲最佳射手',creator:'荷甲助攻王',keeper:'荷甲最佳门将',player:'荷兰年度足球先生',young:'约翰·克鲁伊夫奖'},
+    苏超:{scorer:'苏超最佳射手',creator:'苏超助攻王',keeper:'苏超最佳门将',player:'PFA苏格兰年度最佳球员',young:'PFA苏格兰年度最佳年轻球员'},
+    土超:{scorer:'土超最佳射手',creator:'土超助攻王',keeper:'土超最佳门将',player:'土超赛季最佳球员',young:'土超最佳年轻球员'},
+    俄超:{scorer:'俄超最佳射手',creator:'俄超助攻王',keeper:'俄超最佳门将',player:'俄超赛季最佳球员',young:'俄超最佳年轻球员'},
+    比甲:{scorer:'比甲最佳射手',creator:'比甲助攻王',keeper:'比甲最佳门将',player:'比利时金靴奖',young:'比甲最佳年轻球员'},
+    阿甲:{scorer:'阿甲最佳射手',creator:'阿甲助攻王',keeper:'阿甲最佳门将',player:'阿根廷年度足球先生',young:'阿甲最佳年轻球员'},
+    巴甲:{scorer:'巴甲最佳射手',creator:'巴甲助攻王',keeper:'巴甲最佳门将',player:'巴甲年度最佳球员',young:'巴甲最佳年轻球员'},
+    乌甲:{scorer:'乌甲最佳射手',creator:'乌甲助攻王',keeper:'乌甲最佳门将',player:'乌拉圭年度足球先生',young:'乌甲最佳年轻球员'},
+    中超:{scorer:'中超金靴',creator:'中超助攻王',keeper:'中超最佳门将',player:'中超最有价值球员',young:'中超最佳青年球员'},
+    沙特联:{scorer:'沙特联金靴',creator:'沙特联助攻王',keeper:'沙特联最佳门将',player:'沙特联赛季最佳球员',young:'沙特联最佳年轻球员'},
+    美职联:{scorer:'美职联金靴',creator:'美职联助攻王',keeper:'美职联年度最佳门将',player:'兰登·多诺万MVP',young:'美职联年度最佳年轻球员'},
+    墨超:{scorer:'墨超金靴',creator:'墨超助攻王',keeper:'墨超最佳门将',player:'墨超金球奖',young:'墨超最佳年轻球员'}
+  },
+  superCups:{英超:'社区盾冠军',西甲:'西班牙超级杯冠军',意甲:'意大利超级杯冠军',德甲:'德国超级杯冠军',法甲:'法国超级杯冠军',葡超:'葡萄牙超级杯冠军',荷甲:'约翰·克鲁伊夫盾冠军',苏超:'苏格兰超级杯冠军',土超:'土耳其超级杯冠军',俄超:'俄罗斯超级杯冠军',比甲:'比利时超级杯冠军',阿甲:'阿根廷超级杯冠军',巴甲:'巴西超级杯冠军',乌甲:'乌拉圭超级杯冠军',中超:'中国超级杯冠军',沙特联:'沙特超级杯冠军',美职联:'美职联冠军杯冠军',墨超:'墨西哥冠军杯冠军'},
+  continental:{
+    europe:{elite:'欧冠',second:'欧联杯',third:'欧协联'},
+    southAmerica:{elite:'解放者杯',second:'南美杯'},
+    asia:{elite:'亚冠精英联赛',second:'亚冠二级联赛'},
+    northAmerica:{elite:'中北美冠军杯',second:'北美联赛杯'}
+  },
+  milestoneThresholds:{apps:[50,100,200,300,500,700],goals:[50,100,200,300,500],assists:[50,100,200,300],cleanSheets:[50,100,150,200]}
+  ,nationalKits:{
+    中国:{primary:'#d71920',secondary:'#f5d328',accent:'#f5d328',pattern:'accent'},阿根廷:{primary:'#74b9e6',secondary:'#ffffff',accent:'#171717',pattern:'stripes'},巴西:{primary:'#f5cf22',secondary:'#278445',accent:'#1b4b9b',pattern:'accent'},乌拉圭:{primary:'#70b9e7',secondary:'#111111',accent:'#ffffff',pattern:'solid'},法国:{primary:'#183b78',secondary:'#ffffff',accent:'#df2333',pattern:'accent'},德国:{primary:'#f7f4e9',secondary:'#202020',accent:'#d8b323',pattern:'accent'},英格兰:{primary:'#f5f3ec',secondary:'#1f3158',accent:'#d22434',pattern:'solid'},苏格兰:{primary:'#142d5b',secondary:'#ffffff',accent:'#c72e39',pattern:'accent'},西班牙:{primary:'#c9202f',secondary:'#f0c928',accent:'#273c79',pattern:'accent'},葡萄牙:{primary:'#b51e33',secondary:'#176941',accent:'#e0be2b',pattern:'split'},意大利:{primary:'#1766ae',secondary:'#ffffff',accent:'#173b78',pattern:'solid'},比利时:{primary:'#be1e2d',secondary:'#171717',accent:'#e7c52d',pattern:'accent'},荷兰:{primary:'#ee6c1b',secondary:'#171717',accent:'#ffffff',pattern:'solid'},土耳其:{primary:'#c91f32',secondary:'#ffffff',accent:'#ffffff',pattern:'solid'},俄罗斯:{primary:'#f4f2ea',secondary:'#31529a',accent:'#c92332',pattern:'accent'},沙特阿拉伯:{primary:'#168150',secondary:'#ffffff',accent:'#ffffff',pattern:'solid'},美国:{primary:'#f7f5ec',secondary:'#c62835',accent:'#1b3566',pattern:'hoops'},克罗地亚:{primary:'#ffffff',secondary:'#d42838',accent:'#1c4080',pattern:'checks'},挪威:{primary:'#c91f34',secondary:'#183c72',accent:'#ffffff',pattern:'accent'},日本:{primary:'#1b4f9d',secondary:'#ffffff',accent:'#d9273b',pattern:'solid'},韩国:{primary:'#d92a42',secondary:'#171717',accent:'#ffffff',pattern:'solid'},墨西哥:{primary:'#167449',secondary:'#ffffff',accent:'#c52334',pattern:'accent'},摩洛哥:{primary:'#bd1f31',secondary:'#157447',accent:'#157447',pattern:'solid'},瑞士:{primary:'#d31f33',secondary:'#ffffff',accent:'#ffffff',pattern:'solid'},哥伦比亚:{primary:'#e7ca2a',secondary:'#1f3e7f',accent:'#ca2438',pattern:'accent'},丹麦:{primary:'#c91e32',secondary:'#ffffff',accent:'#ffffff',pattern:'accent'},塞内加尔:{primary:'#f3f0dc',secondary:'#16804b',accent:'#d9ba26',pattern:'accent'},尼日利亚:{primary:'#f5f3e8',secondary:'#158252',accent:'#158252',pattern:'stripes'}
+  }
+};
