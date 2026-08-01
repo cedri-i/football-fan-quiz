@@ -19,6 +19,7 @@ assert(Object.keys(NATIONS).every(n=>NATIONAL_KITS[n]),'有国籍缺少国家队
 assert(composePlayerName('梅西','利昂内尔','阿根廷')==='利昂内尔 梅西','西文姓名顺序错误');
 assert(composePlayerName('李','明','中国')==='李明','中文姓名顺序错误');
 assert(composePlayerName('李','','中国')==='李','单姓开档失败');
+game=newGame('青训测试','ST','中国',16,9);const youthOffer=makeOffer(CLUBS.find(c=>c.name==='青岛海牛'),'首份合同',false);assert(!['绝对核心','主力'].includes(youthOffer.role)&&!youthOffer.promise.includes('围绕'),'16岁首份合同角色承诺过高');
 const values=Array.from({length:1000},()=>{const g=newGame('测试','ST','中国',16,23);return g.value});
 assert(Math.min(...values)>=.08&&Math.max(...values)<=8,'初始身价越界');
 assert(new Set(values).size>20,'初始身价没有足够波动');
