@@ -29,6 +29,7 @@ assert(clubPower(spurs)>clubPower(flamengo),'跨洲俱乐部实力未分层');
 evolveClubPowers();assert(Object.keys(game.clubDynamics).length===CLUBS.length,'动态球队实力未覆盖全部俱乐部');
 game=newGame('门将测试','GK','德国',24,1);game.overall=90;game.reputation=100;game.year=2029;
 const nationalGK=rollNationalSeason();assert(nationalGK.called&&nationalGK.saves>0&&nationalGK.goals===0,'门将国家队数据错误');
+game=newGame('预选赛测试','ST','中国',24,9);game.overall=82;game.reputation=100;game.year=2029;const qualifyingRandom=Math.random;Math.random=()=>.999;const failedQualification=rollNationalSeason();Math.random=qualifyingRandom;assert(failedQualification.competition==='世界杯预选赛'&&failedQualification.stage==='未晋级世界杯正赛'&&!failedQualification.qualified,'未晋级时仍把预选赛数据标成世界杯正赛');
 game=newGame('金童测试','ST','西班牙',19,9);game.overall=88;const oldRandom=Math.random;Math.random=()=>0;
 const awardArgs={goals:30,assists:10,apps:38,cleanSheets:0,saves:0,rating:8,teamHonors:['西甲冠军'],club:CLUBS.find(c=>c.name==='巴塞罗那')};
 const firstAwards=rollPersonalHonors(awardArgs),secondAwards=rollPersonalHonors(awardArgs);Math.random=oldRandom;
